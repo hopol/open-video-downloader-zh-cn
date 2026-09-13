@@ -51,18 +51,6 @@ jobs:
             artifact: linux-arm64
             portable_architecture: ''
             release_directory: ''
-          - name: macOS Apple Silicon（未签名候选）
-            runner: macos-latest
-            args: '--target aarch64-apple-darwin'
-            artifact: macos-aarch64
-            portable_architecture: ''
-            release_directory: ''
-          - name: macOS Intel（未签名候选）
-            runner: macos-latest
-            args: '--target x86_64-apple-darwin'
-            artifact: macos-x64
-            portable_architecture: ''
-            release_directory: ''
 
     runs-on: ${{ matrix.runner }}
     env:
@@ -87,7 +75,7 @@ jobs:
         uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # rust-toolchain action
         with:
           toolchain: 1.94.1
-          targets: ${{ matrix.runner == 'windows-11-arm' && 'aarch64-pc-windows-msvc' || matrix.runner == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.runner == 'windows-11-arm' && 'aarch64-pc-windows-msvc' || '' }}
 
       - name: 缓存 Rust 构建产物
         uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2

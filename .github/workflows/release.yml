@@ -215,8 +215,11 @@ jobs:
             for f in "$dir"**/*; do
               [[ -f "$f" ]] || continue
               [[ -s "$f" ]] || continue
+              case "$f" in
+                *.deb|*.rpm|*.AppImage|*.exe|*.zip) ;;
+                *) continue ;;
+              esac
               filename=$(basename "$f")
-              [[ "$filename" == "SHA256SUMS.txt" ]] && continue
               cp "$f" "$staging/${platform}_${filename}"
             done
           done

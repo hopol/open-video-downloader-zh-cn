@@ -1,92 +1,197 @@
-# Open Video Downloader 简体中文维护版
+<p align="center">
+  <img src="docs/icon.png" alt="Open Video Downloader" width="120">
+</p>
 
-> 基于 [jely2002/youtube-dl-gui](https://github.com/jely2002/youtube-dl-gui) 的独立维护版本。
-> 本项目不是上游官方发布，也不隶属于上游维护者。
+<h1 align="center">Open Video Downloader</h1>
 
-这是一个跨平台桌面视频下载器的简体中文维护版。它以图形界面封装 [yt-dlp](https://github.com/yt-dlp/yt-dlp)，可从其支持的网站下载视频、音频、字幕与元数据。
+<p align="center">
+  <strong>简体中文维护版 · 简洁、快速、跨平台的视频下载工具</strong>
+</p>
 
-## 当前状态
+<p align="center">
+  <a href="https://github.com/hopol/open-video-downloader-zh-cn/releases/latest">
+    <img src="https://img.shields.io/github/v/release/hopol/open-video-downloader-zh-cn?label=最新版本" alt="最新版本">
+  </a>
+  <a href="https://github.com/hopol/open-video-downloader-zh-cn/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/hopol/open-video-downloader-zh-cn/ci.yml?branch=main&label=构建状态" alt="构建状态">
+  </a>
+  <a href="https://github.com/hopol/open-video-downloader-zh-cn/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/hopol/open-video-downloader-zh-cn?label=开源协议" alt="开源协议">
+  </a>
+</p>
 
-- 已加入完整的简体中文界面、托盘菜单、原生通知和 Windows 简体中文安装器界面。
-- 浏览器语言为 `zh-CN`、`zh-Hans` 或 `zh` 时，首次启动会默认选择简体中文；`zh-TW` 与 `zh-Hant` 保持繁体中文。
-- 应用自身的自动更新已关闭。请从本项目的发布页面手动下载安装新版，并校验发布页提供的校验和。
-- 首期不启用应用内错误遥测；不会向上游的 Sentry 项目发送应用错误或诊断数据。
-- 下载器工具（例如 yt-dlp 和 FFmpeg）的更新功能仍可在设置中单独控制。当前它使用上游公开、经签名的工具清单；这**不是**本应用的自动更新通道。自建签名清单服务前，请审阅其供应链风险说明。
-- 正式发布仅在工作流验证后提供。发布资产会发布到 [hopol/open-video-downloader-zh-cn 的 Releases 页面](https://github.com/hopol/open-video-downloader-zh-cn/releases)。
+---
 
-## 功能
+<p align="center">
+  基于 <a href="https://github.com/jely2002/youtube-dl-gui">jely2002/youtube-dl-gui</a> 的独立维护版本<br>
+  本项目不是上游官方发布，也不隶属于上游维护者
+</p>
 
-- 下载视频、仅音频、字幕与元数据。
-- 支持播放列表、输出模板、质量选择、下载队列和多任务并发控制。
-- 支持浏览器 Cookie 文件、基本认证和视频密码。
-- 支持 Windows、Linux 与 macOS 的源代码构建；正式 macOS 发行需要独立的 Apple 签名和公证资质，未具备该条件时不会发布 macOS 安装包。
-- 支持浅色、深色和跟随系统主题。
+---
 
-## 下载与安装
+## ✨ 功能特性
 
-发布完成后，请仅从 [hopol/open-video-downloader-zh-cn 的 GitHub Releases 页面](https://github.com/hopol/open-video-downloader-zh-cn/releases) 下载文件。
+<table>
+  <tr>
+    <td>🎬 <strong>视频下载</strong></td>
+    <td>支持从 YouTube、Bilibili、Twitter 等数千个网站下载视频</td>
+  </tr>
+  <tr>
+    <td>🎵 <strong>音频提取</strong></td>
+    <td>支持 MP3、M4A、FLAC 等多种音频格式</td>
+  </tr>
+  <tr>
+    <td>📝 <strong>字幕下载</strong></td>
+    <td>支持自动/手动字幕，多种字幕格式</td>
+  </tr>
+  <tr>
+    <td>📋 <strong>播放列表</strong></td>
+    <td>一键下载整个播放列表，支持并发控制</td>
+  </tr>
+  <tr>
+    <td>🔐 <strong>身份验证</strong></td>
+    <td>支持 Cookie、基本认证、Bearer Token</td>
+  </tr>
+  <tr>
+    <td>⚙️ <strong>自定义设置</strong></td>
+    <td>代理、质量选择、输出模板、主题切换</td>
+  </tr>
+  <tr>
+    <td>🖥️ <strong>跨平台</strong></td>
+    <td>Windows 10/11、Ubuntu/Debian、Fedora</td>
+  </tr>
+  <tr>
+    <td>🌍 <strong>简体中文</strong></td>
+    <td>完整的中文界面、托盘菜单和系统通知</td>
+  </tr>
+</table>
 
-由于首期不使用 Windows 代码签名证书，Windows 可能显示 SmartScreen 警告。请仅下载可验证来源的发布资产，并在安装前核对 `SHA256SUMS.txt`：
+---
+
+## 📦 快速开始
+
+### 下载
+
+前往 [Releases 页面](https://github.com/hopol/open-video-downloader-zh-cn/releases/latest) 下载对应平台的安装包。
+
+| 平台 | 文件格式 | 安装方式 |
+|------|----------|----------|
+| **Windows x64** | `.exe` / `.zip` | 双击安装 / 解压运行 |
+| **Windows ARM64** | `.exe` / `.zip` | 双击安装 / 解压运行 |
+| **Linux x64** | `.deb` / `.rpm` / `.AppImage` | `sudo apt install` / `sudo dnf install` / 赋权运行 |
+| **Linux ARM64** | `.deb` / `.rpm` / `.AppImage` | `sudo apt install` / `sudo dnf install` / 赋权运行 |
+
+### 验证完整性
+
+下载后请使用 SHA-256 校验文件验证完整性：
 
 ```bash
+# Linux / macOS
 sha256sum -c SHA256SUMS.txt
+
+# Windows PowerShell
+Get-FileHash .\下载的文件名 -Algorithm SHA256
 ```
 
-Windows PowerShell 可使用：
+将结果与 `SHA256SUMS.txt` 中的哈希值对照。
 
-```powershell
-Get-FileHash .\下载的资产文件名 -Algorithm SHA256
-```
+---
 
-请将结果与发布页的 `SHA256SUMS.txt` 对照。
+## 🛠️ 从源码构建
 
-Windows 提供两种 x64/ARM64 分发方式：NSIS 安装包，以及 `*-portable.zip` 便携包。便携包需完整解压到可写目录后运行，保留主程序同级的 `open-video-downloader-zh-cn-portable` 目录；不要在压缩包预览中直接启动，也不要删除该目录。它需要系统已安装 Microsoft Edge WebView2 Evergreen Runtime，且不保证没有钥匙串、自动启动或通知等系统级痕迹。
+### 前置条件
 
-Linux 的 Deb 包内部名称固定为 `open-video-downloader-zh-cn`，以符合 Debian 包名规则；安装时请使用 `sudo apt install ./<下载的 .deb 文件>`，不要依赖旧版带中文名称的 Deb 文件。
+- [Node.js](https://nodejs.org/) 24+
+- [Rust](https://rustup.rs/) 工具链
+- Tauri 系统依赖（[安装指南](https://v2.tauri.app/start/prerequisites/#linux)）
 
-## 本地开发
-
-前置条件：
-
-- Node.js 24 或更高版本；
-- Rust 工具链（版本由持续集成工作流固定）；
-- Linux 上构建桌面应用还需要 Tauri、WebKitGTK 和系统托盘相关系统依赖。
+### 构建步骤
 
 ```bash
+# 克隆仓库
+git clone https://github.com/hopol/open-video-downloader-zh-cn.git
+cd open-video-downloader-zh-cn
+
+# 安装依赖
 npm ci
+
+# 运行检查
 npm run check:locales
 npm run test:unit
 npm run build
+
+# 启动开发模式
 npm run tauri dev
+
+# 构建发行版
+npm run tauri build
 ```
 
-Rust 检查：
+### Rust 检查
 
 ```bash
 npm run rust:lint
 npm run rust:test
 ```
 
-详细环境、持续集成、发布、回滚和上游同步说明请查看：
+---
 
-- [部署与维护文档](docs/DEPLOYMENT.zh-CN.md)
-- [维护检查清单](docs/MAINTENANCE-CHECKLIST.zh-CN.md)
-- [上游来源记录](.fork/upstream.json)
+## 🖼️ 界面预览
 
-## 上游同步与贡献
+<!-- 在此处添加应用截图 -->
+<!-- ![界面预览](docs/screenshot.png) -->
 
-本项目保留上游 Git 历史，并通过独立的 `upstream` 远程跟踪：
+应用支持浅色、深色和跟随系统三种主题模式。
 
-```text
-https://github.com/jely2002/youtube-dl-gui.git
-```
+---
 
-同步只会创建可审阅的候选分支和拉取请求，绝不应自动向 `main` 直接合并。有关冲突解决和安全审查步骤，请参阅部署文档。
+## 🔄 与上游的关系
 
-提交问题、功能建议和安全报告时，请使用本项目的 [问题页面](https://github.com/hopol/open-video-downloader-zh-cn/issues)。不要把派生版问题发送给上游维护者。
+本项目保留上游 Git 历史，并通过独立的 `upstream` 远程跟踪上游变化。
 
-## 许可证与免责声明
+- **同步策略**：每周自动检查上游更新，创建可审阅的 PR
+- **不会**自动合并到 main，需要人工审核
+- **工具更新**：yt-dlp 等下载工具的更新可在应用内单独控制
 
-本项目按 [GNU Affero General Public License v3.0 或更高版本](LICENSE) 发布。作为上游项目的派生版本，必须持续提供与所分发二进制对应的完整源代码，并保留许可证、版权声明与来源信息；详见 [NOTICE](NOTICE)。
+详细说明请参阅：[部署与维护文档](docs/DEPLOYMENT.zh-CN.md)
 
-请在遵守所在地法律、网站条款和内容权利人的授权范围内使用本软件。维护者不鼓励或支持绕过访问控制、侵害版权或违反服务条款的行为。
+---
+
+## 📚 相关文档
+
+| 文档 | 说明 |
+|------|------|
+| [部署与维护](docs/DEPLOYMENT.zh-CN.md) | CI/CD、发布、上游同步详细流程 |
+| [维护检查清单](docs/MAINTENANCE-CHECKLIST.zh-CN.md) | 发布前的完整检查项 |
+| [Cookie 认证](docs/COOKIE-AUTHENTICATION.zh-CN.md) | 如何配置 Cookie 以访问私有内容 |
+| [贡献指南](CONTRIBUTING.md) | 如何参与项目贡献 |
+
+---
+
+## 🐛 问题反馈
+
+如果遇到问题或有功能建议，请使用 GitHub Issues：
+
+👉 [提交 Issue](https://github.com/hopol/open-video-downloader-zh-cn/issues/new?template=bug_report.md)
+
+⚠️ 请勿将问题发送给上游维护者，本项目是独立维护版本。
+
+---
+
+## 📜 许可证
+
+本项目采用 [GNU Affero General Public License v3.0](LICENSE) 发布。
+
+作为上游项目的派生版本，本项目持续提供完整的源代码，并保留所有必要的许可证和版权声明。
+
+---
+
+## 🙏 致谢
+
+感谢 [jely2002](https://github.com/jely2002) 创建的优秀上游项目。
+
+---
+
+<p align="center">
+  <sub>用 ❤️ 制作 · 如果觉得有用请给个 ⭐</sub>
+</p>
