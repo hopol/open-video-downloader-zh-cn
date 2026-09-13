@@ -2,51 +2,46 @@
 
 ## Supported Versions
 
-Open Video Downloader currently provides security fixes only for supported `3.x` releases.
-Versions `1.x` and `2.x` are no longer supported with security updates.
+Open Video Downloader 简体中文维护版仅为受支持的 `3.x` 正式发布版本提供安全修复。`main` 分支快照和未发布构建仅按尽力原则处理；`2.x` 及更早版本不再获得安全更新。
 
-| Version | Supported |
-| ------- | --------- |
-| `3.x` | :white_check_mark: |
-| `main` branch snapshots / unreleased builds | :warning: Best effort only |
-| `2.x` and older | :x: |
+| 版本 | 支持状态 |
+| --- | --- |
+| `3.x` 正式发布版本 | 支持 |
+| `main` 分支快照／未发布构建 | 仅尽力处理 |
+| `2.x` 及更早版本 | 不支持 |
 
-If you are unsure whether you are on a supported version, install the newest release from the [GitHub Releases page](https://github.com/jely2002/youtube-dl-gui/releases) before reporting the issue.
+如不确定正在使用的版本，请先从[本项目发布页面](https://github.com/hopol/open-video-downloader-zh-cn/releases)安装最新正式版本，再提交报告。
 
-## Reporting a Vulnerability
+## 报告安全漏洞
 
-Please do **not** open a public GitHub issue for suspected security vulnerabilities.
+**请不要**为疑似安全漏洞创建公开议题。
 
-Use one of these private channels instead:
+1. 优先在本仓库的“安全”页面使用 GitHub 私密漏洞报告功能。
+2. 若该功能暂不可用，请联系仓库维护者，并在联系前避免将漏洞细节公开发布。
 
-1. Open a private report through GitHub's **Security** tab using **Report a vulnerability**.
-2. If private reporting is not available, email [ytdlgui@jelleglebbeek.com](mailto:ytdlgui@jelleglebbeek.com).
+报告请尽量包含：
 
-Please include:
+- 问题说明和受影响功能；
+- 应用版本和操作系统；
+- 可复现问题的步骤；
+- 有助于确认影响的最小验证示例、日志、截图或崩溃信息；
+- 已知时对影响范围的判断。
 
-- A clear description of the issue and the affected feature.
-- The Open Video Downloader version and operating system.
-- Steps to reproduce the problem.
-- Any proof-of-concept, logs, screenshots, or crash details that help confirm impact.
-- Your assessment of impact, if known.
+处理预期：
 
-What to expect:
+- 维护者会尽力在 7 天内确认收到报告；
+- 可能要求补充信息或复现条件；
+- 确认问题后会修复，并在适当时协调披露时间；
+- 如不属于范围或无法复现，会说明原因。
 
-- We will try to acknowledge new reports within 7 days.
-- We may ask for clarification or additional reproduction details.
-- If the report is confirmed, we will work on a fix and may coordinate disclosure timing with you.
-- If the report is out of scope or cannot be reproduced, we will explain why and close it.
+## 范围
 
-## Scope
+以下问题尤其适合通过私密渠道报告：
 
-Security reports are especially helpful for issues involving:
+- 远程代码执行；
+- 命令注入或不安全的进程执行；
+- 路径遍历或任意文件访问；
+- 凭据、Cookie、令牌或个人数据泄露；
+- 工具清单、安装器、签名或软件包完整性问题。
 
-- Remote code execution.
-- Command injection or unsafe process execution.
-- Path traversal or arbitrary file access.
-- Credential, cookie, token, or personal data exposure.
-- Update, installer, signing, or package integrity issues.
-
-If you are not sure whether something qualifies as a security issue, report it privately first. We would rather triage a low-impact report privately than have a real vulnerability posted publicly by mistake.
-
-General bugs, download failures, site extractor issues, and feature requests should go through the normal public issue tracker instead.
+不确定是否属于安全问题时，请先私密报告。一般功能缺陷、下载失败、站点解析问题和功能建议应提交到[公开议题页面](https://github.com/hopol/open-video-downloader-zh-cn/issues)。

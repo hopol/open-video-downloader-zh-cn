@@ -779,10 +779,6 @@
       "updateBinaries": {
         "label": "Mettre à jour automatiquement les outils :",
         "hint": "OVD utilise des outils comme yt-dlp et ffmpeg. Activez pour les garder à jour."
-      },
-      "updateApp": {
-        "label": "Mettre à jour automatiquement l’app :",
-        "hint": "Activez pour recevoir les nouveautés et correctifs dès qu’une nouvelle version sort."
       }
     },
     "system": {
@@ -850,14 +846,6 @@
       "saved": "Paramètres enregistrés !",
       "reset": "Paramètres réinitialisés par défaut."
     }
-  },
-  "updater": {
-    "available": "Mise à jour disponible !",
-    "install": {
-      "title": "Installer la mise à jour",
-      "subtitle": "Cela redémarrera l’application."
-    },
-    "downloading": "Téléchargement de la mise à jour…"
   },
   "install": {
     "title": {

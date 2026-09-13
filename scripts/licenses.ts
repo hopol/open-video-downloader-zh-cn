@@ -34,8 +34,8 @@ async function main() {
   const externalTools = await generateExternalToolsSection();
 
   const content = [
-    'Open Video Downloader – Third-Party Licenses',
-    '===========================================',
+    'Open Video Downloader 简体中文维护版 – 第三方许可证',
+    '==================================================',
     '',
     externalTools,
     '',

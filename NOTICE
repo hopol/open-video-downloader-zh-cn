@@ -1,0 +1,26 @@
+Open Video Downloader 简体中文维护版
+Copyright (C) 2026 本派生项目维护者
+
+本项目是下列上游项目的独立派生版本：
+
+  Open Video Downloader (youtube-dl-gui)
+  https://github.com/jely2002/youtube-dl-gui
+
+上游基线、同步时间和所依据的提交记录在 `.fork/upstream.json` 中。
+本项目不属于上游维护者，也不应被表述为上游官方发行。
+
+许可
+====
+
+本项目依据 GNU Affero General Public License v3.0 或更高版本（AGPL-3.0-or-later）发布。
+完整许可文本位于 `LICENSE`。分发已修改的版本或网络可用版本时，维护者必须遵守 AGPL 的相应源代码提供义务。
+
+归属
+====
+
+上游项目的版权声明、第三方许可证和原有贡献者归属应予保留。第三方依赖的许可证汇总文件位于 `licenses/3rdpartylicenses.txt`；不得因派生、更名或本地化而删除其中的第三方许可内容。
+
+独立发布
+========
+
+本项目的代码签名、Apple 公证、Windows 证书、商店身份、Tauri 应用更新密钥、Sentry/分析服务和发行仓库均必须由本派生项目单独建立。严禁复用上游私钥、证书、令牌或商店身份。

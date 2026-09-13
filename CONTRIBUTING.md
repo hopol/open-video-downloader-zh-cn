@@ -1,115 +1,90 @@
-# Contributing to Open Video Downloader
+# 贡献指南
 
-Thanks for taking an interest in contributing!  
-Open Video Downloader (OVD) is built with **Tauri (Rust backend)** and a **Vue 3 + TypeScript front-end**.  
-It wraps [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) into a simple desktop app for downloading videos from hundreds of supported sites.
+感谢关注 Open Video Downloader 简体中文维护版。本项目基于 Tauri（Rust 后端）和 Vue 3 + TypeScript 前端，使用 yt-dlp 提供多网站的视频、音频、字幕和元数据下载能力。
 
-This document explains how to set up a local environment, follow our conventions, and submit contributions.
+> 本仓库是独立维护的派生项目，并非上游官方仓库。提交前请先阅读 [`AGENTS.md`](AGENTS.md)、[`NOTICE`](NOTICE) 和[部署手册](docs/DEPLOYMENT.zh-CN.md)。
 
-## Branching and workflow
+## 分支与合并
 
-We follow a lightweight **Gitflow** style workflow:
+- 所有变更应通过拉取请求合并到 `main`。
+- 不要直接推送 `main`，也不要让自动化工作流审批或合并拉取请求。
+- 上游同步只能通过 `sync/upstream-<短提交号>` 候选分支进行审阅。
+- 发布标签仅使用 `zh-cn-v<版本号>`，不要使用上游的 `app-v*` 格式。
 
-- **`main`** — active development (think of it as nightly).
-- **`release`** — stable branch used for tagged releases.
-- Feature branches follow the format:
-    - `feature/my-new-thing`
-    - `bugfix/fixed-a-crash`
-    - `chore/update-deps`, etc.
+## 开发环境
 
-When a release is ready, we bump versions on `main` and merge into `release` to trigger the build and publishing pipeline.
+需要 Node.js 24 或更高版本；修改 Rust 或打包时还需要 Rust 1.94.1 和 Tauri 的系统依赖。
 
-## Commit style
-
-We use **Conventional Commits**.  
-Keep messages clear, descriptive, and scoped when possible:
-
-```
-feat(dispatcher): improve fairness algorithm
-fix(header): handle invalid URL input gracefully
-```
-
-Try to avoid vague messages like “update stuff”.
-
-## Development setup
-
-You’ll need **Node.js (v24+)** and **Rust (latest stable)** installed.
-
-Clone, install dependencies, and run the app:
-
-```
-npm install
+```bash
+npm ci
+npm run verify:identity
+npm run check:locales
+npm run lint
+npm run test:unit
+npm run build
 npm run tauri dev
 ```
 
-## Code style
+修改 Rust 后，在具备相应环境时还应运行：
 
-- **Frontend:** ESLint handles formatting and code style automatically.  
-  Run `npm run lint:fix` before committing.
-- **Backend:** Use `cargo clippy` and `cargo fmt` before pushing.
-- Keep code readable and consistent with the existing style.
+```bash
+npm run rust:lint
+npm run rust:test
+```
 
-## Testing
+## 代码与提交要求
 
-- Run `npm run test:unit` for unit tests.
-- Run `npm run test:e2e` for end-to-end tests (Playwright).
-- Rust tests can be run with `cargo test`.
+- 前端使用 `npm run lint` 检查；不要绕过静态检查。
+- Rust 代码须通过格式化、Clippy 和单元测试。
+- 提交信息使用 `类型: 简短说明`，例如 `修复: 更正简体中文默认语言识别`。
+- 新功能和缺陷修复应添加覆盖常见场景的测试。
+- 不要提交私钥、令牌、证书、构建产物或个人数据。
 
-New features and bug fixes should include tests for common cases.  
-Full coverage isn’t required, but regressions should be caught by tests.
+## 翻译维护
 
-## Pull requests
+英文语言文件是所有翻译键、结构和插值变量的唯一基准：
 
-1. Make sure your PR targets **`main`**.
-2. Make sure all **CI checks pass** (lint, build, tests).
-3. Get at least **one approval** before merging.
-4. Link related **issues or milestones** if applicable.
+```text
+src/locales/en.json
+src-tauri/locales/en.json
+```
 
-Opening an issue before starting work is appreciated, it helps track progress and lets others find related discussions.
+简体中文翻译位于：
 
-## Translating Open Video Downloader
+```text
+src/locales/zh-CN.json
+src-tauri/locales/zh-CN.json
+```
 
-Thank you for helping translate OVD!
+维护翻译时：
 
-### Testing your translation
+1. 不要修改键名、对象结构或 `{变量名}`；
+2. 保留复数规则、格式占位符和必要标记；
+3. 保持界面用语简洁、准确；
+4. 每次修改后运行：
 
-1. Clone the app from GitHub to your local machine.
-2. Run the app in development mode:
-    ```bash
-    npm install  
-    npm run tauri dev
-    ```
-2. Edit the English locales to preview:
-   `src-tauri/locales/en.json`
-   `src/locales/en.json`
+   ```bash
+   npm run check:locales
+   npm run test:unit -- --run tests/unit/i18n.spec.ts
+   ```
 
-    Temporarily modify the text on the right-hand side of each key.  
-    Do not change any keys. The UI will update automatically when the file is saved.
+## 派生项目安全边界
 
-3. Create your own language files:
-   `src-tauri/locales/<language-code>.json`
-   `src/locales/<language-code>.json`
+- 不得恢复应用内自动更新、上游 Sentry 或未经声明的遥测。
+- 不得复用上游的证书、签名密钥、令牌、商店身份或其他私密配置。
+- 下载器工具更新目前仍使用上游的公开签名清单；更改其地址或内置公钥前，必须先完成本项目的独立 Ed25519 密钥、签名、托管和验证迁移。
+- 修改 `.github/workflows/`、`scripts/`、`src-tauri/tauri.conf.json`、`src-tauri/Cargo.toml`、`.fork/upstream.json` 或 `NOTICE` 时，必须在拉取请求中明确说明影响并由代码所有者审阅。
 
-For example: `it.json`, `de.json`, `fr.json`.  
-Please restore `en.json` back to English before opening a pull request.
+## 提交拉取请求前
 
-**Good to know:** Open Video Downloader has 2 locale folders. One for the front-end and one for back-end things like the tray menu and notifications.
+确认：
 
-### Translation guidelines
+1. 目标分支是 `main`；
+2. 持续集成所需检查均通过；
+3. 文档和简体中文翻译与改动同步；
+4. 未改变项目的独立身份或安全边界；
+5. 如涉及上游同步，已审查语言、更新器、遥测、依赖和发布配置差异。
 
-- Do not rename keys or change the JSON structure.
-- Keep placeholders exactly as written: {count}, {error}, {version}, {percent}, etc.
-- Do not translate brand or technical names (Open Video Downloader, yt-dlp, ffmpeg, SponsorBlock, .mp4, .mp3, etc.).
-- Preserve any markup such as `<strong>text</strong>` and translate only the visible text.
-- Prefer short, clear UI labels instead of long sentences.
+## 许可证
 
-
-## Need help?
-
-If you’re unsure where to start, open a draft PR or discussion.  
-We’re happy to help point you in the right direction.
-
-## License
-
-By contributing, you agree that your code will be licensed under the same  
-[AGPL-3.0 license](./LICENSE) as the rest of the project.
+提交到本仓库的代码依照 [AGPL-3.0-or-later](LICENSE) 许可。上游版权声明、贡献者归属和第三方许可证必须保留。

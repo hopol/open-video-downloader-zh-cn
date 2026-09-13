@@ -1,17 +1,20 @@
 ---
-name: Question
-about: Ask a question about youtube-dl-gui
-title: ''
+name: 问题咨询
+about: 询问 Open Video Downloader 简体中文维护版的使用或行为
 labels: question
 assignees: ''
-
 ---
 
-**Is your question related to a problem? Please describe.**
-  A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-  
-  **Describe the question you have.**
-  A clear and concise question about youtube-dl-gui.
-  
-  **Additional context**
-  Add any other context or screenshots about the question here.
+<!-- 请勿在公开议题中提交安全漏洞；请使用仓库的“安全”页面私密报告。 -->
+
+## 问题与现有问题的关系
+
+请简要说明遇到的困惑或使用场景。
+
+## 具体问题
+
+请清楚说明希望得到解答的内容。
+
+## 补充信息
+
+如有必要，请补充截图、应用版本、操作系统和已尝试的操作。

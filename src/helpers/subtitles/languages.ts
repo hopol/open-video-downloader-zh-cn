@@ -12,6 +12,7 @@ const expandedCodes: Record<string, SubtitleLanguageOption> = {
   'pt-PT': { code: 'pt-PT', englishName: 'Portuguese (Portugal)', nativeName: 'Português (Portugal)' },
   'pt-BR': { code: 'pt-BR', englishName: 'Portuguese (Brazil)', nativeName: 'Português (Brasil)' },
   'zh-TW': { code: 'zh-TW', englishName: 'Traditional Chinese (Taiwan)', nativeName: '繁體中文（台灣）' },
+  'zh-CN': { code: 'zh-CN', englishName: 'Simplified Chinese (China)', nativeName: '简体中文（中国）' },
 };
 
 export const languageOptions: SubtitleLanguageOption[] = [...codes, ...Object.keys(expandedCodes)]
@@ -31,11 +32,21 @@ export const languageOptionsLookup = new Map(
 );
 
 function normalizeLocale(candidate: string): string {
-  const parts = candidate.replace(/_/g, '-').split('-');
+  const parts = candidate.replace(/_/g, '-').split('-').filter(Boolean);
   const language = parts[0]?.toLowerCase() ?? '';
-  const region = parts[1]?.toUpperCase();
+  const subtags = parts.slice(1).map((part) => {
+    if (/^[A-Za-z]{4}$/.test(part)) {
+      return `${part[0]?.toUpperCase()}${part.slice(1).toLowerCase()}`;
+    }
 
-  return region ? `${language}-${region}` : language;
+    if (/^[A-Za-z]{2}$/.test(part) || /^\d{3}$/.test(part)) {
+      return part.toUpperCase();
+    }
+
+    return part.toLowerCase();
+  });
+
+  return [language, ...subtags].filter(Boolean).join('-');
 }
 
 export function getSubtitleLanguageLabel(code: string): string {
@@ -104,7 +115,7 @@ export function detectBrowserLanguageCodes(): string[] {
 
     const locale = normalizeLocale(candidate);
 
-    if (expandedCodes[locale]) {
+    if (expandedCodes[locale] || locale === 'zh-Hans' || locale === 'zh-Hant') {
       normalized.add(locale);
     }
 

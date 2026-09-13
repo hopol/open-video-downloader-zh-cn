@@ -456,8 +456,8 @@
       "legend": "Formato nome file",
       "legendLabel": "Seleziona il nome che avranno i file scaricati.",
       "reversePlaylistNumbering": {
-        "label": "Numerazione inversa playlist:",
-        "hint": "Numera gli elementi della playlist in ordine inverso."
+        "label": "Numerazione playlist inversa:",
+        "hint": "Numera gli elementi della playlist dalla fine invece che dall’inizio."
       },
       "formatPreset": {
         "label": "Prefisso nome file:",
@@ -487,10 +487,6 @@
       },
       "outputFormat": {
         "label": "Formato nome file:"
-      },
-      "reversePlaylistNumbering": {
-        "label": "Numerazione playlist inversa:",
-        "hint": "Numera gli elementi della playlist dalla fine invece che dall’inizio."
       }
     },
     "toasts": {
@@ -780,10 +776,6 @@
       "updateBinaries": {
         "label": "Aggiorna automaticamente strumenti:",
         "hint": "OVD usa per scaricare video strumenti come yt-dlp e ffmpeg. Abilita questo per mantenere gli strumenti aggiornati."
-      },
-      "updateApp": {
-        "label": "Aggiorna automaticamente app:",
-        "hint": "Attiva questa opzione per ricevere nuove funzionalità e correzioni di bug non appena viene rilasciata una nuova versione dell'app."
       }
     },
     "system": {
@@ -851,14 +843,6 @@
       "saved": "Impostazioni salvate!",
       "reset": "Impostazioni ripristinate ai valori predefiniti."
     }
-  },
-  "updater": {
-    "available": "Disponibile aggiornamento!",
-    "install": {
-      "title": "Installa aggiornamento",
-      "subtitle": "Questo riavvierà l'app."
-    },
-    "downloading": "Download aggiornamento…"
   },
   "install": {
     "title": {

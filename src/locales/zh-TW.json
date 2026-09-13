@@ -779,10 +779,6 @@
       "updateBinaries": {
         "label": "自動更新工具:",
         "hint": "OVD 會使用 yt-dlp 與 ffmpeg 等工具下載影片。啟用此選項可維持於最新狀態。"
-      },
-      "updateApp": {
-        "label": "自動更新應用程式:",
-        "hint": "開啟此選項後，新版本發佈時會立即取得新功能與錯誤修正。"
       }
     },
     "system": {
@@ -850,14 +846,6 @@
       "saved": "設定已儲存！",
       "reset": "設定已重設為預設值。"
     }
-  },
-  "updater": {
-    "available": "有可用更新！",
-    "install": {
-      "title": "安裝更新",
-      "subtitle": "這將重新啟動應用程式。"
-    },
-    "downloading": "正在下載更新…"
   },
   "install": {
     "title": {

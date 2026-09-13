@@ -127,7 +127,6 @@ export interface SponsorBlockSettings {
 
 export interface UpdateSettings {
   updateBinaries: boolean;
-  updateApp: boolean;
 }
 
 export enum CloseBehavior {
@@ -263,7 +262,6 @@ export const defaultSponsorBlockSettings: SponsorBlockSettings = {
 
 export const defaultUpdateSettings: UpdateSettings = {
   updateBinaries: true,
-  updateApp: true,
 };
 
 export const defaultSystemSettings: SystemSettings = {

@@ -1,20 +1,24 @@
 ---
-name: Feature request
-about: Suggest an idea for youtube-dl-gui
-title: ''
+name: 功能建议
+about: 为 Open Video Downloader 简体中文维护版提出改进建议
 labels: 'feature request'
 assignees: ''
-
 ---
 
-**Is your feature request related to a problem? Please describe.**
-  A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
-  
-  **Describe the solution you'd like**
-  A clear and concise description of what you want to happen.
-  
-  **Describe alternatives you've considered**
-  A clear and concise description of any alternative solutions or features you've considered.
-  
-  **Additional context**
-  Add any other context or screenshots about the feature request here.
+<!-- 请勿在公开议题中提交安全漏洞；请使用仓库的“安全”页面私密报告。 -->
+
+## 要解决的问题
+
+请简要说明这个建议解决的使用问题。
+
+## 建议的方案
+
+请清楚描述期望的行为或功能。
+
+## 替代方案
+
+请说明已经考虑过的替代做法。
+
+## 补充信息
+
+可在此添加截图、示例或其他上下文。

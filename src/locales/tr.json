@@ -779,10 +779,6 @@
       "updateBinaries": {
         "label": "Araçları otomatik olarak güncelle:",
         "hint": "OVD, videoları indirmek için yt-dlp ve ffmpeg gibi araçları kullanır. Bunları güncel tutmak için bu ayarı etkinleştirin."
-      },
-      "updateApp": {
-        "label": "Uygulamayı otomatik olarak güncelle:",
-        "hint": "Yeni özellikleri ve hata düzeltmelerini yeni sürüm çıkar çıkmaz almak için bu ayarı etkinleştirin."
       }
     },
     "system": {
@@ -850,14 +846,6 @@
       "saved": "Ayarlar kaydedildi!",
       "reset": "Ayarları varsayılana sıfırla."
     }
-  },
-  "updater": {
-    "available": "Güncelleme mevcut!",
-    "install": {
-      "title": "Güncellemeyi indir",
-      "subtitle": "Bu, uygulamayı yeniden başlatacaktır."
-    },
-    "downloading": "Güncelleme indiriliyor…"
   },
   "install": {
     "title": {

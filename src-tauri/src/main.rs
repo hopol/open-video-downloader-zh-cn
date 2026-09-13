@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-  open_video_downloader_lib::run();
+  open_video_downloader_zh_cn_lib::run();
 }

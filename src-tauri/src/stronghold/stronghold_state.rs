@@ -7,8 +7,8 @@ use tauri::{AppHandle, State};
 use tauri_plugin_keyring::KeyringExt;
 use tauri_plugin_stronghold::stronghold::Stronghold;
 
-pub const CLIENT: &[u8] = b"ovd";
-const KR_SERVICE: &str = "com.jelleglebbeek.youtube-dl-gui";
+pub const CLIENT: &[u8] = b"ovd-zh-cn";
+const KR_SERVICE: &str = "io.github.hopol.open-video-downloader-zh-cn";
 const KR_ACCOUNT: &str = "master_key";
 
 #[derive(Debug, Default, Clone)]

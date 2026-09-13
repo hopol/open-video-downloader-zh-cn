@@ -13,16 +13,6 @@
         class="toggle toggle-primary"
     />
     <p class="label">{{ t('settings.update.updateBinaries.hint') }}</p>
-    <label class="font-semibold mt-2" for="updateApp">
-      {{ t('settings.update.updateApp.label') }}
-    </label>
-    <input
-        id="updateApp"
-        type="checkbox"
-        v-model="settings.update.updateApp"
-        class="toggle toggle-primary"
-    />
-    <p class="label">{{ t('settings.update.updateApp.hint') }}</p>
   </base-fieldset>
 </template>
 <script setup lang="ts">

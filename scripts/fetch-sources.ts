@@ -29,7 +29,7 @@ export interface Manifest {
 }
 
 const LAYOUT_ROOT = 'msix-layout';
-const APP_DIR = path.join(LAYOUT_ROOT, 'Open Video Downloader');
+const APP_DIR = path.join(LAYOUT_ROOT, 'Open Video Downloader 简体中文维护版');
 const BIN_ROOT = path.join(APP_DIR, 'bin');
 
 function detectPlatformKey(): string {

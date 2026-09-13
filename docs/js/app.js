@@ -1,34 +1,28 @@
-function getOS() {
-  let userAgent = window.navigator.userAgent,
-    platform = window.navigator.platform,
-    macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
-    windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
-    iosPlatforms = ['iPhone', 'iPad', 'iPod'],
-    os;
+const repository = 'hopol/open-video-downloader-zh-cn';
+const releasesUrl = `https://github.com/${repository}/releases`;
+const latestReleaseUrl = `${releasesUrl}/latest`;
 
-  if (macosPlatforms.indexOf(platform) !== -1) {
-    os = 'MacOS Silicon';
-  } else if (iosPlatforms.indexOf(platform) !== -1) {
-    os = 'other';
-  } else if (windowsPlatforms.indexOf(platform) !== -1) {
-    os = 'Windows';
-  } else if (/Android/.test(userAgent)) {
-    os = 'other';
-  } else if (/Linux/.test(platform)) {
-    os = 'Linux x64';
-  } else {
-    os = 'other';
-  }
-  return os;
+function getOS() {
+  const { userAgent, platform } = window.navigator;
+  const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'];
+  const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'];
+  const iosPlatforms = ['iPhone', 'iPad', 'iPod'];
+
+  if (macosPlatforms.includes(platform)) return 'macOS';
+  if (iosPlatforms.includes(platform)) return 'other';
+  if (windowsPlatforms.includes(platform)) return 'Windows';
+  if (/Android/.test(userAgent)) return 'other';
+  if (/Linux/.test(platform)) return 'Linux';
+  return 'other';
 }
 
 async function httpGet(url) {
   return await new Promise((resolve) => {
     const xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function () {
-      if (xmlHttp.readyState === 4 && xmlHttp.status === 200)
+      if (xmlHttp.readyState === 4 && xmlHttp.status === 200) {
         resolve(xmlHttp.responseText);
-      else if (xmlHttp.readyState === 4 && xmlHttp.status != null) {
+      } else if (xmlHttp.readyState === 4 && xmlHttp.status != null) {
         resolve(null);
       }
     };
@@ -38,83 +32,79 @@ async function httpGet(url) {
 }
 
 function getAssetDownload(os, release) {
-  const version = release.tag_name.substring(5);
-  let assetName;
-  switch (os) {
-    case 'Windows':
-      assetName = 'Open.Video.Downloader_' + version + '_x64-setup.exe';
-      break;
-    case 'MacOS Silicon':
-      assetName = 'Open.Video.Downloader_' + version + '_aarch64.dmg';
-      break;
-    case 'Linux x64':
-      assetName = 'Open.Video.Downloader_' + version + '_amd64.AppImage';
-  }
+  const preferredExtensions = {
+    Windows: ['.exe'],
+    Linux: ['.AppImage', '.deb', '.rpm'],
+  };
+  const extensions = preferredExtensions[os];
 
-  for (const asset of release.assets) {
-    if (assetName === asset.name) {
-      return asset.browser_download_url;
-    }
-  }
-}
+  if (!extensions) return undefined;
 
-function setupMicrosoftButton(os) {
-  if (os !== 'Windows') {
-    return;
-  }
-
-  const msButton = document.getElementById('ms-download-button');
-  msButton.style.display = 'block';
-  const button = document.getElementById('download-button');
-  button.style.display = 'none';
+  const asset = release.assets.find(candidate => extensions.some(extension => candidate.name.endsWith(extension)));
+  return asset ? asset.browser_download_url : undefined;
 }
 
 function setOtherVersionsText(os) {
-  if (os === 'MacOS Silicon') {
-    document.getElementById('other-versions').innerHTML = 'Other versions (MacOS Intel)';
-  } else if (os === 'Linux x64') {
-    document.getElementById('other-versions').innerHTML = 'Other versions (Linux ARM / deb / rpm)';
-  } else if (os === 'Windows') {
-    document.getElementById('other-versions').innerHTML = 'Other versions (Portable / Installer)';
+  const otherVersions = document.getElementById('other-versions');
+
+  if (os === 'Windows') {
+    otherVersions.innerHTML = '查看其他 Windows 或 Linux 安装包';
+  } else if (os === 'Linux') {
+    otherVersions.innerHTML = '查看其他 Linux 或 Windows 安装包';
+  } else {
+    otherVersions.innerHTML = '查看全部发布版本';
   }
+}
+
+function configureFallback(button, downloadType, downloadLink, text) {
+  downloadType.innerHTML = text;
+  button.addEventListener('click', () => {
+    window.location.href = latestReleaseUrl;
+  });
+  downloadLink.setAttribute('href', latestReleaseUrl);
 }
 
 async function setDownloadButton() {
   const os = getOS();
+  const button = document.getElementById('download-button');
+  const downloadType = document.getElementById('download-type');
+  const downloadLink = document.getElementById('download-link');
+
   setOtherVersionsText(os);
-  setupMicrosoftButton(os);
-  const versionData = await httpGet('https://api.github.com/repos/jely2002/youtube-dl-gui/releases/latest');
-  if (versionData == null) {
-    const download = 'https://github.com/jely2002/youtube-dl-gui/releases/latest';
-    document.getElementById('download-type').innerHTML = 'For ' + os;
-    document.getElementById('download-button').addEventListener('click', () => {
-      window.location.href = download;
-    });
-    document.getElementById('download-link').setAttribute('href', download);
-  } else if (os !== 'other') {
-    const release = JSON.parse(versionData);
-    const download = getAssetDownload(os, release);
-    document.getElementById('download-type').innerHTML = release.tag_name + ' - ' + os;
-    document.getElementById('download-button').addEventListener('click', () => {
-      window.location = download;
-    });
-    document.getElementById('download-link').setAttribute('href', download);
-  } else {
-    const download = 'https://github.com/jely2002/youtube-dl-gui/releases/latest';
-    document.getElementById('download-type').style.display = 'none';
-    document.getElementById('download-button').addEventListener('click', () => {
-      window.location.href = download;
-    });
-    document.getElementById('download-link').setAttribute('href', download);
+
+  const versionData = await httpGet(`https://api.github.com/repos/${repository}/releases/latest`);
+  if (versionData == null || os === 'other') {
+    configureFallback(button, downloadType, downloadLink, os === 'other' ? '前往发布页面选择安装包' : `适用于 ${os}`);
+    return;
   }
+
+  let release;
+  try {
+    release = JSON.parse(versionData);
+  } catch (error) {
+    void error;
+    configureFallback(button, downloadType, downloadLink, `适用于 ${os}`);
+    return;
+  }
+
+  const download = getAssetDownload(os, release);
+  if (!download) {
+    configureFallback(button, downloadType, downloadLink, `${release.tag_name}：前往发布页面选择安装包`);
+    return;
+  }
+
+  downloadType.innerHTML = `${release.tag_name} · ${os}`;
+  button.addEventListener('click', () => {
+    window.location.href = download;
+  });
+  downloadLink.setAttribute('href', download);
 }
 
 (function () {
-  setDownloadButton().then(() => console.log('Download button configured'));
+  void setDownloadButton();
   document.getElementById('hamburger').addEventListener('click', () => {
     const nav = document.getElementById('nav-list');
     const opened = nav.style.display !== 'none';
-    console.log(opened);
     nav.style.display = opened ? 'none' : 'block';
   });
 }());

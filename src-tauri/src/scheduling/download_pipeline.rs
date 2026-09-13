@@ -2,7 +2,7 @@ use crate::models::download::{DownloadOverrides, FormatOptions};
 use crate::models::DownloadItem;
 use crate::models::SubtitleInventory;
 use crate::runners::template_context::TemplateContext;
-use crate::runners::ytdlp_download::{run_ytdlp_download, YtdlpDownloadError};
+use crate::runners::ytdlp_download::run_ytdlp_download;
 use crate::scheduling::concurrency::DynamicSemaphore;
 use crate::scheduling::dispatcher::{DispatchEntry, DispatchRequest, GenericDispatcher};
 use std::collections::HashMap;
@@ -101,9 +101,6 @@ pub fn setup_download_dispatcher(
           error = %e,
           "Failed to run ytdlp download",
         );
-        if should_report_to_sentry(&e) {
-          sentry::capture_error(&e);
-        }
       }
 
       let mut counters = DOWNLOAD_COUNTERS.lock().unwrap();
@@ -117,14 +114,5 @@ pub fn setup_download_dispatcher(
         }
       }
     },
-  )
-}
-
-fn should_report_to_sentry(err: &YtdlpDownloadError) -> bool {
-  matches!(
-    err,
-    YtdlpDownloadError::SpawnFailed(_)
-      | YtdlpDownloadError::InvalidDiagnosticRules(_)
-      | YtdlpDownloadError::EventStreamEnded
   )
 }

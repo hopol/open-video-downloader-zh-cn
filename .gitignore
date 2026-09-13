@@ -30,3 +30,6 @@ licenses/*
 # Tests
 test-results/
 coverage/
+
+# Claude Code local worktrees and session state
+.claude/

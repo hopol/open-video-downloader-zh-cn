@@ -876,10 +876,6 @@
       "updateBinaries": {
         "label": "Actualizar herramientas automáticamente:",
         "hint": "La aplicación usa herramientas como yt-dlp y FFmpeg para descargar videos; habilita esto para mantenerlas actualizadas."
-      },
-      "updateApp": {
-        "label": "Actualizar la app automáticamente:",
-        "hint": "Activa esto para recibir nuevas funciones y correcciones de errores en cuanto se lance una nueva versión."
       }
     },
     "system": {
@@ -947,14 +943,6 @@
       "saved": "¡Ajustes guardados!",
       "reset": "Se restablecieron los ajustes predeterminados."
     }
-  },
-  "updater": {
-    "available": "¡Actualización disponible!",
-    "install": {
-      "title": "Instalar actualización",
-      "subtitle": "Esto reiniciará la aplicación."
-    },
-    "downloading": "Descargando actualización…"
   },
   "install": {
     "title": {
@@ -1104,9 +1092,9 @@
         "shortMessage": "Error de FFmpeg",
         "message": "FFmpeg encontró un error durante el procesamiento."
       },
-      "rejectedByFilter":{
+      "rejectedByFilter": {
         "shortMessage": "Excluido por filtro",
-        "message":"Este elemento fue rechazado por tus filtros de entrada."
+        "message": "Este elemento fue rechazado por tus filtros de entrada."
       },
       "cannotAllocateMemory": {
         "shortMessage": "Error de memoria",

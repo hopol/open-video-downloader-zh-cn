@@ -27,10 +27,10 @@ fn setup_macos(handle: &AppHandle) {
 
   let app_submenu = SubmenuBuilder::new(handle, "App")
     .about(Some(AboutMetadata {
-      name: Some("Open Video Downloader".into()),
-      copyright: Some("© Jelle Glebbeek and contributors".into()),
+      name: Some("Open Video Downloader 简体中文维护版".into()),
+      copyright: Some("包含上游贡献者的独立简体中文维护版本".into()),
       license: Some("GNU Affero General Public License v3.0".into()),
-      website: Some("https://jely2002.github.io/youtube-dl-gui/".into()),
+      website: Some("https://github.com/hopol/open-video-downloader-zh-cn".into()),
       ..Default::default()
     }))
     .separator()

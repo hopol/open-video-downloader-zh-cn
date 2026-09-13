@@ -23,6 +23,7 @@ export default [
       'dist-isolation/**',
       'src-isolation/**',
       'src-tauri/**',
+      'scripts/**',
       'test-results/**',
       'src/vite-env.d.ts',
       'msix-layout/**',

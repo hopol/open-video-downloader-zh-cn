@@ -1,75 +1,55 @@
-name: Build manifest and deploy pages
+name: 构建工具清单并部署页面
 
 on:
-  push:
-    branches: [release]
-    paths:
-      - 'docs/**'
-      - 'scripts/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/pages.yml'
-  schedule:
-    - cron: '0 0 * * *'
   workflow_dispatch:
+    inputs:
+      confirm_independent_manifest:
+        description: 确认已配置独立 Ed25519 密钥、独立 Pages 地址并完成审查
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   update:
+    if: inputs.confirm_independent_manifest == true
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
     steps:
-      - name: Checkout release branch for manifest
+      - name: 检出主分支
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          ref: release
-          path: release
 
-      - name: Checkout main branch for docs
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          ref: main
-          path: main
-
-      - name: Setup Node
+      - name: 设置 Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24
+          cache: npm
 
-      - name: Install dependencies
-        working-directory: release
+      - name: 安装依赖
         run: npm ci
 
-      - name: Generate manifest
-        working-directory: release
+      - name: 生成工具清单
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: npm run manifest:gen
 
-      - name: Sign manifest
-        working-directory: release
-        run: npm run manifest:sign
+      - name: 使用派生项目密钥签名清单
         env:
           ED25519_PRIV_KEY_B64: ${{ secrets.ED25519_PRIV_KEY_B64 }}
+        run: npm run manifest:sign
 
-      - name: Verify manifest
-        working-directory: release
-        run: npm run manifest:verify
+      - name: 使用派生项目公钥验证清单
         env:
           ED25519_PUB_KEY_HEX: ${{ secrets.ED25519_PUB_KEY_HEX }}
+        run: npm run manifest:verify
 
-      - name: Copy manifest into main/docs
-        run: |
-          mkdir -p main/docs/manifest
-          cp -R release/docs/manifest/* main/docs/manifest/
-
-      - name: Upload docs as Pages artifact
+      - name: 上传页面构建产物
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
-          path: main/docs
+          path: docs
 
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: 部署至 GitHub Pages
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

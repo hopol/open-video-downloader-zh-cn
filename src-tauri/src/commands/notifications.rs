@@ -82,7 +82,7 @@ pub fn notify(
     let handle = Notification::new()
       .summary(title.as_str())
       .body(body.as_str())
-      .icon("open-video-downloader")
+      .icon("open-video-downloader-zh-cn")
       .show()
       .map_err(|e| e.to_string())?;
 

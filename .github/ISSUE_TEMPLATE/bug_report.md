@@ -1,32 +1,36 @@
 ---
-name: Bug report
-about: Create a bug report to improve this app
-title: ''
+name: 缺陷报告
+about: 报告 Open Video Downloader 简体中文维护版的可复现问题
 labels: bug
 assignees: ''
-
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!-- 请勿在公开议题中提交安全漏洞；请使用仓库的“安全”页面私密报告。 -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## 问题描述
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+请清楚、简洁地描述实际发生的情况。
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## 复现步骤
 
-**Additional info (please complete the following information):**
-- OS: [e.g. Windows 10]
-- Application version [e.g. 1.8.4] (the version can be found in the settings menu)
-- Application type [e.g. portable, installer, Microsoft Store]
+1.
+2.
+3.
 
-**Additional context**
-Add any other context about the problem here.
+## 预期行为
+
+请说明原本预期会发生什么。
+
+## 截图或日志
+
+如适用，请附上能说明问题的截图或已脱敏日志。
+
+## 运行环境
+
+- 操作系统：
+- 应用版本：
+- 安装方式：便携版、安装包或其他：
+
+## 补充信息
+
+可在此添加其他有助于定位问题的内容。

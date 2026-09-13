@@ -27,12 +27,10 @@ use crate::state::config::ConfigHandle;
 use crate::state::preferences::PreferencesHandle;
 use crate::tray::{create_tray, TrayState};
 use crate::window::{restore_main_window, setup_close_behaviour, track_main_window};
-use sentry::ClientInitGuard;
 use std::sync::{Arc, Mutex as StdMutex};
 use stronghold::stronghold_state;
 use tauri::{AppHandle, Manager};
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
-use tokio::sync::Mutex;
 use tracing_subscriber::filter::{LevelFilter, Targets};
 use tracing_subscriber::{fmt, prelude::*};
 
@@ -53,7 +51,6 @@ pub fn run() {
   let app = tauri::Builder::default()
     .plugin(tauri_plugin_notification::init())
     .plugin(tauri_plugin_autostart::Builder::new().build())
-    .plugin(tauri_plugin_updater::Builder::new().build())
     .plugin(tauri_plugin_store::Builder::new().build())
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_clipboard_manager::init())
@@ -70,17 +67,6 @@ pub fn run() {
     }))
     .setup(|app| {
       let handle = app.handle();
-
-      let sentry_client = sentry::init((
-        "https://e5ff83f3c84f397db516955ec278c4c6@o762792.ingest.us.sentry.io/4510256640884736",
-        sentry::ClientOptions {
-          traces_sample_rate: 0.05,
-          sample_rate: 0.25,
-          release: sentry::release_name!(),
-          ..sentry::ClientOptions::default()
-        },
-      ));
-      handle.manage::<ClientInitGuard>(sentry_client);
 
       init_tracing();
 
@@ -115,9 +101,6 @@ pub fn run() {
 
       // setup autostart
       init_autostart(handle);
-
-      // manage update store
-      handle.manage(Mutex::new(UpdateStore::default()));
 
       // manage log store
       handle.manage(LogStoreState::new());
@@ -177,9 +160,6 @@ pub fn run() {
       preferences_set,
       binaries_check,
       binaries_ensure,
-      updater_check,
-      updater_download,
-      updater_install,
       stronghold_init,
       stronghold_status,
       stronghold_keys,
@@ -235,7 +215,6 @@ fn create_main_window(app: &AppHandle, paths: &PathsManager) -> tauri::Result<()
 pub fn init_tracing() {
   let fmt_layer = fmt::layer().with_filter(
     Targets::new()
-      .with_target("tauri_plugin_updater", LevelFilter::OFF)
       .with_target(
         "tao::platform_impl::platform::event_loop::runner",
         LevelFilter::OFF,
@@ -245,16 +224,7 @@ pub fn init_tracing() {
       .with_default(tracing_levels()),
   );
 
-  let sentry_layer = sentry::integrations::tracing::layer().with_filter(
-    Targets::new()
-      .with_target("tauri_plugin_updater", LevelFilter::OFF)
-      .with_default(tracing_levels()),
-  );
-
-  tracing_subscriber::registry()
-    .with(fmt_layer)
-    .with(sentry_layer)
-    .init();
+  tracing_subscriber::registry().with(fmt_layer).init();
 }
 
 pub fn init_autostart(app: &AppHandle) {

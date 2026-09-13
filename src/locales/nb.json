@@ -779,10 +779,6 @@
       "updateBinaries": {
         "label": "Oppdater verktøy automatisk:",
         "hint": "OVD bruker verktøy som yt-dlp og ffmpeg for å laste ned videoer. Aktiver dette for å holde dem oppdatert."
-      },
-      "updateApp": {
-        "label": "Oppdater appen automatisk:",
-        "hint": "Aktiver dette for å motta nye funksjoner og feilrettinger så snart en ny versjon blir utgitt."
       }
     },
     "system": {
@@ -850,14 +846,6 @@
       "saved": "Innstillinger lagret!",
       "reset": "Tilbakestill innstillinger til standard."
     }
-  },
-  "updater": {
-    "available": "Oppdatering tilgjengelig!",
-    "install": {
-      "title": "Installer oppdatering",
-      "subtitle": "Dette vil starte appen på nytt."
-    },
-    "downloading": "Laster ned oppdatering…"
   },
   "install": {
     "title": {

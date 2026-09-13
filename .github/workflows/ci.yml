@@ -1,0 +1,93 @@
+name: 持续集成
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: 前端检查
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 验证派生项目身份
+        run: npm run verify:identity
+
+      - name: 验证简体中文语言包
+        run: npm run check:locales
+
+      - name: 运行静态检查
+        run: npm run lint
+
+      - name: 运行单元测试
+        run: npm run test:unit
+
+      - name: 构建前端与隔离页面
+        run: npm run build
+
+  rust:
+    name: Rust 检查
+    runs-on: ubuntu-latest
+    env:
+      CARGO_TERM_COLOR: always
+      TAURI_SKIP_UPDATE_CHECK: 1
+      CARGO_TARGET_DIR: src-tauri/target
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 安装 Node.js 依赖并构建隔离页面
+        run: |
+          npm ci
+          npm run build:isolation
+
+      - name: 安装 Tauri 系统依赖
+        uses: ./.github/actions/install-tauri-deps
+
+      - name: 安装 Rust 工具链
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # rust-toolchain action
+        with:
+          toolchain: 1.94.1
+          components: clippy,rustfmt
+
+      - name: 创建供 Rust 检查使用的许可证资源
+        run: |
+          mkdir -p licenses
+          printf '%s\n' '第三方许可证完整清单仅在正式打包前生成。' > licenses/3rdpartylicenses.txt
+
+      - name: 缓存 Rust 构建产物
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: 检查 Rust 格式
+        run: cargo fmt --manifest-path=src-tauri/Cargo.toml --all -- --check
+
+      - name: 运行 Clippy
+        run: cargo clippy --manifest-path=src-tauri/Cargo.toml --all-features --all-targets -- -D warnings
+
+      - name: 运行 Rust 单元测试
+        run: cargo test --manifest-path=src-tauri/Cargo.toml --all-features --all-targets

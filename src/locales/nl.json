@@ -779,10 +779,6 @@
       "updateBinaries": {
         "label": "Tools automatisch updaten:",
         "hint": "OVD gebruikt tools zoals yt-dlp en ffmpeg. Met deze optie blijven ze automatisch up-to-date."
-      },
-      "updateApp": {
-        "label": "App automatisch updaten:",
-        "hint": "Krijg direct nieuwe functies en bugfixes zodra er een nieuwe versie beschikbaar is."
       }
     },
     "system": {
@@ -850,14 +846,6 @@
       "saved": "Instellingen opgeslagen!",
       "reset": "Instellingen teruggezet."
     }
-  },
-  "updater": {
-    "available": "Update beschikbaar!",
-    "install": {
-      "title": "Update installeren",
-      "subtitle": "De app wordt opnieuw gestart."
-    },
-    "downloading": "Update downloaden…"
   },
   "install": {
     "title": {

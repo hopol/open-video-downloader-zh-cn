@@ -267,14 +267,12 @@ impl Default for SubtitleSettings {
 #[serde(default, rename_all = "camelCase")]
 pub struct UpdateSettings {
   pub update_binaries: bool,
-  pub update_app: bool,
 }
 
 impl Default for UpdateSettings {
   fn default() -> Self {
     Self {
       update_binaries: true,
-      update_app: true,
     }
   }
 }

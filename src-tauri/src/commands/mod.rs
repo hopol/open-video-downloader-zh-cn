@@ -9,7 +9,6 @@ pub mod platform;
 pub mod preferences;
 pub mod shortcuts;
 pub mod stronghold;
-pub mod updater;
 
 pub use app_ready::*;
 pub use binaries::*;
@@ -22,4 +21,3 @@ pub use platform::*;
 pub use preferences::*;
 pub use shortcuts::*;
 pub use stronghold::*;
-pub use updater::*;

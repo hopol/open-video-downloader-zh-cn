@@ -2,14 +2,12 @@
   <the-header/>
   <main class="flex-grow min-w-0 overflow-y-auto overflow-x-hidden h-full relative bg-base-200">
     <router-view :key="$route.fullPath"/>
-    <the-updater/>
   </main>
   <the-footer/>
 </template>
 <script setup lang="ts">
 import TheFooter from '../components/TheFooter.vue';
 import TheHeader from '../components/TheHeader.vue';
-import TheUpdater from '../components/TheUpdater.vue';
 import { ref, watch, watchEffect } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useMediaGroupStore } from '../stores/media/group.ts';

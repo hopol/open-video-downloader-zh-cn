@@ -1,16 +1,15 @@
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
 
-const PORTABLE_DIR: &str = "ovd-portable";
+const PORTABLE_DIR: &str = "open-video-downloader-zh-cn-portable";
 const BIN_DIR: &str = "bin";
 const SNAP_USER_DATA_ENV: &str = "SNAP_USER_DATA";
 const SNAP_USER_COMMON_ENV: &str = "SNAP_USER_COMMON";
 
 #[derive(Clone)]
 pub struct PathsManager {
-  is_microsoft_store_app: bool,
+  #[cfg(windows)]
   is_portable_app: bool,
-  is_snap_app: bool,
   app_dir: PathBuf,
   bin_dir: PathBuf,
 }
@@ -18,18 +17,15 @@ pub struct PathsManager {
 impl PathsManager {
   pub fn new(app: &AppHandle) -> Self {
     let (app_dir, is_portable_app, is_snap_app) = Self::resolve_app_dir(app);
-    let (bin_dir, is_microsoft_store_app) = Self::resolve_bin_dir(app_dir.clone());
+    let bin_dir = Self::resolve_bin_dir(app_dir.clone());
 
-    let mut environment_type = "installed";
-    if is_microsoft_store_app {
-      environment_type = "microsoft-store"
-    }
-    if is_portable_app {
-      environment_type = "portable";
-    }
-    if is_snap_app {
-      environment_type = "snap";
-    }
+    let environment_type = if is_snap_app {
+      "snap"
+    } else if is_portable_app {
+      "portable"
+    } else {
+      "installed"
+    };
     tracing::debug!("automatically detected environment: {}", environment_type);
     tracing::debug!(
       "automatically detected paths: app_dir={:?}, bin_dir={:?}",
@@ -54,24 +50,16 @@ impl PathsManager {
     }
 
     Self {
-      is_microsoft_store_app,
+      #[cfg(windows)]
       is_portable_app,
-      is_snap_app,
       app_dir,
       bin_dir,
     }
   }
 
-  pub fn is_microsoft_store_app(&self) -> bool {
-    self.is_microsoft_store_app
-  }
-
+  #[cfg(windows)]
   pub fn is_portable_app(&self) -> bool {
     self.is_portable_app
-  }
-
-  pub fn is_snap_app(&self) -> bool {
-    self.is_snap_app
   }
 
   pub fn app_dir(&self) -> &PathBuf {
@@ -82,7 +70,7 @@ impl PathsManager {
     &self.bin_dir
   }
 
-  fn resolve_bin_dir(app_dir: PathBuf) -> (PathBuf, bool) {
+  fn resolve_bin_dir(app_dir: PathBuf) -> PathBuf {
     Self::resolve_bin_dir_with(
       app_dir,
       Self::resolve_executable_path(),
@@ -150,19 +138,19 @@ impl PathsManager {
     app_dir: PathBuf,
     exe_dir: Option<PathBuf>,
     snap_user_common: Option<PathBuf>,
-  ) -> (PathBuf, bool) {
+  ) -> PathBuf {
     if let Some(exe_dir) = exe_dir {
       let bin_dir = exe_dir.join(BIN_DIR);
       if bin_dir.exists() {
-        return (bin_dir, true);
+        return bin_dir;
       }
     }
 
     if let Some(snap_common_dir) = snap_user_common {
-      return (snap_common_dir.join(BIN_DIR), false);
+      return snap_common_dir.join(BIN_DIR);
     }
 
-    (app_dir.join(BIN_DIR), false)
+    app_dir.join(BIN_DIR)
   }
 }
 
@@ -172,7 +160,11 @@ mod tests {
   use std::fs;
 
   fn temp_dir(prefix: &str) -> PathBuf {
-    let dir = std::env::temp_dir().join(format!("ovd-{}-{}", prefix, uuid::Uuid::new_v4()));
+    let dir = std::env::temp_dir().join(format!(
+      "open-video-downloader-zh-cn-{}-{}",
+      prefix,
+      uuid::Uuid::new_v4()
+    ));
     fs::create_dir_all(&dir).expect("failed to create temp dir");
     dir
   }
@@ -245,27 +237,23 @@ mod tests {
     fs::create_dir_all(&snap_user_common).unwrap();
     fs::create_dir_all(&app_dir).unwrap();
 
-    let (bin_dir, is_microsoft_store) =
-      PathsManager::resolve_bin_dir_with(app_dir, None, Some(snap_user_common.clone()));
+    let bin_dir = PathsManager::resolve_bin_dir_with(app_dir, None, Some(snap_user_common.clone()));
 
     assert_eq!(bin_dir, snap_user_common.join(BIN_DIR));
-    assert!(!is_microsoft_store);
   }
 
   #[test]
-  fn resolve_bin_dir_uses_exe_bin_for_microsoft_store() {
-    let base = temp_dir("ms-bin-dir");
+  fn resolve_bin_dir_uses_executable_bin_when_present() {
+    let base = temp_dir("executable-bin-dir");
     let exe_dir = base.join("exe");
     let bin_dir = exe_dir.join(BIN_DIR);
     let app_dir = base.join("app");
     fs::create_dir_all(&bin_dir).unwrap();
     fs::create_dir_all(&app_dir).unwrap();
 
-    let (resolved, is_microsoft_store) =
-      PathsManager::resolve_bin_dir_with(app_dir, Some(exe_dir), None);
+    let resolved = PathsManager::resolve_bin_dir_with(app_dir, Some(exe_dir), None);
 
     assert_eq!(resolved, bin_dir);
-    assert!(is_microsoft_store);
   }
 
   #[test]
@@ -274,10 +262,8 @@ mod tests {
     let app_dir = base.join("app");
     fs::create_dir_all(&app_dir).unwrap();
 
-    let (resolved, is_microsoft_store) =
-      PathsManager::resolve_bin_dir_with(app_dir.clone(), None, None);
+    let resolved = PathsManager::resolve_bin_dir_with(app_dir.clone(), None, None);
 
     assert_eq!(resolved, app_dir.join(BIN_DIR));
-    assert!(!is_microsoft_store);
   }
 }
