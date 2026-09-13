@@ -187,18 +187,6 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: release-assets
-          merge-multiple: true
-
-      - name: 生成 SHA-256 校验和
-        working-directory: release-assets
-        run: |
-          find . -type f -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS.txt
-
-      - name: 读取上游基线
-        id: upstream
-        run: |
-          echo "commit=$(node -p 'require("./.fork/upstream.json").upstream.commit')" >> "$GITHUB_OUTPUT"
-          echo "version=$(node -p 'require("./.fork/upstream.json").upstream.version')" >> "$GITHUB_OUTPUT"
 
       - name: 创建草稿发布并上传资产
         env:
@@ -220,13 +208,16 @@ jobs:
             --title "Open Video Downloader 简体中文维护版 $VERSION" \
             --draft \
             --notes-file release-notes.md
-          shopt -s globstar nullglob
-          files=()
-          for f in release-assets/**/*; do
-            [[ -f "$f" ]] && files+=("$f")
+          staging=$(mktemp -d)
+          for dir in release-assets/*/; do
+            platform=$(basename "$dir")
+            shopt -s globstar nullglob
+            for f in "$dir"**/*; do
+              [[ -f "$f" ]] || continue
+              filename=$(basename "$f")
+              [[ "$filename" == "SHA256SUMS.txt" ]] && continue
+              cp "$f" "$staging/${platform}_${filename}"
+            done
           done
-          if [[ ${#files[@]} -eq 0 ]]; then
-            echo "错误：release-assets 目录中没有找到文件。" >&2
-            exit 1
-          fi
-          gh release upload "$TAG" "${files[@]}" --clobber
+          find "$staging" -type f -print0 | sort -z | xargs -0 sha256sum > "$staging/SHA256SUMS.txt"
+          gh release upload "$TAG" "$staging"/* --clobber
