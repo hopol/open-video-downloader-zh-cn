@@ -73,6 +73,11 @@ jobs:
           toolchain: 1.94.1
           components: clippy,rustfmt
 
+      - name: 创建供 Rust 检查使用的许可证资源
+        run: |
+          mkdir -p licenses
+          printf '%s\n' '第三方许可证完整清单仅在正式打包前生成。' > licenses/3rdpartylicenses.txt
+
       - name: 缓存 Rust 构建产物
         uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
         with:
