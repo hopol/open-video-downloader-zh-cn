@@ -205,21 +205,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ needs.verify-release.outputs.tag }}
           VERSION: ${{ needs.verify-release.outputs.version }}
-          UPSTREAM_COMMIT: ${{ steps.upstream.outputs.commit }}
-          UPSTREAM_VERSION: ${{ steps.upstream.outputs.version }}
         run: |
-          cat > release-notes.md <<EOF
+          cat > release-notes.md <<'NOTES'
           ## 发布说明
 
           这是独立维护的简体中文版本，不是上游官方发行。
 
-          - 上游基线：\`$UPSTREAM_VERSION\`（\`$UPSTREAM_COMMIT\`）
           - 本版本未启用应用内自动更新；请从本发布页手动升级。
           - 本版本未启用应用内错误遥测。
-          - 请在下载后使用 \`SHA256SUMS.txt\` 校验安装包完整性。
+          - 请在下载后使用 `SHA256SUMS.txt` 校验安装包完整性。
           - Windows 安装包在首期可能未使用代码签名，SmartScreen 警告不表示文件一定有害；请仅从此发布页下载并校验摘要。
-          EOF
-          find release-assets -type f -print0 | sort -z | xargs -0 gh release create "$TAG" \
+          NOTES
+          gh release create "$TAG" \
             --title "Open Video Downloader 简体中文维护版 $VERSION" \
             --draft \
             --notes-file release-notes.md
+          find release-assets -type f -print0 | sort -z | xargs -0 -I {} gh release upload "$TAG" "{}" --clobber
