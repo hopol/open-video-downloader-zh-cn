@@ -224,9 +224,7 @@ pub fn init_tracing() {
       .with_default(tracing_levels()),
   );
 
-  tracing_subscriber::registry()
-    .with(fmt_layer)
-    .init();
+  tracing_subscriber::registry().with(fmt_layer).init();
 }
 
 pub fn init_autostart(app: &AppHandle) {
