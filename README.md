@@ -35,10 +35,14 @@ sha256sum -c SHA256SUMS.txt
 Windows PowerShell 可使用：
 
 ```powershell
-Get-FileHash .\安装包文件名.exe -Algorithm SHA256
+Get-FileHash .\下载的资产文件名 -Algorithm SHA256
 ```
 
 请将结果与发布页的 `SHA256SUMS.txt` 对照。
+
+Windows 提供两种 x64/ARM64 分发方式：NSIS 安装包，以及 `*-portable.zip` 便携包。便携包需完整解压到可写目录后运行，保留主程序同级的 `open-video-downloader-zh-cn-portable` 目录；不要在压缩包预览中直接启动，也不要删除该目录。它需要系统已安装 Microsoft Edge WebView2 Evergreen Runtime，且不保证没有钥匙串、自动启动或通知等系统级痕迹。
+
+Linux 的 Deb 包内部名称固定为 `open-video-downloader-zh-cn`，以符合 Debian 包名规则；安装时请使用 `sudo apt install ./<下载的 .deb 文件>`，不要依赖旧版带中文名称的 Deb 文件。
 
 ## 本地开发
 

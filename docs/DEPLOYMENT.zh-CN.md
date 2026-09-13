@@ -38,10 +38,10 @@
 
 | 平台 | 候选构建 | 正式发布 | 说明 |
 | --- | --- | --- | --- |
-| Windows x64 | 是 | 是 | 首期可为未签名安装包。 |
-| Windows ARM64 | 是 | 是 | 使用 ARM64 目标构建。 |
+| Windows x64 | 是 | 是 | 提供未签名 NSIS 安装包和 x64 便携 ZIP。 |
+| Windows ARM64 | 是 | 是 | 使用 ARM64 目标构建，并提供 ARM64 便携 ZIP。 |
 | Linux x64 | 是 | 是 | 构建 AppImage、Deb 和 RPM 等 Tauri 默认目标。 |
-| Linux ARM64 | 是 | 是 | 在 ARM64 运行器构建。 |
+| Linux ARM64 | 是 | 是 | 在 ARM64 运行器构建；AppImage 打包依赖 `xdg-utils` 提供的 `xdg-open`。 |
 | macOS Intel | 是 | 否 | 先验证裸构建，不以未签名候选作为正式交付。 |
 | macOS Apple Silicon | 是 | 否 | 先验证裸构建，不以未签名候选作为正式交付。 |
 
@@ -210,7 +210,7 @@ Windows 安装程序的简体中文由 Tauri 配置中的 `SimpChinese` 控制�
 
 ### `候选构建`
 
-`.github/workflows/build.yml` 会在手动触发和相关拉取请求时，为 Windows x64/ARM64、Linux x64/ARM64 与 macOS Intel/Apple Silicon 生成临时候选安装包。
+`.github/workflows/build.yml` 会在手动触发和相关拉取请求时，为 Windows x64/ARM64、Linux x64/ARM64 与 macOS Intel/Apple Silicon 生成临时候选安装包。Windows 两个架构均会在原有 NSIS 安装器之外生成相同架构的 `*-portable.zip`；Linux 两个架构必须生成 AppImage、Deb 和 RPM，且共享依赖动作会在打包前验证 `/usr/bin/xdg-open` 可用。
 
 它不会创建 Release，也不会导入 Apple 证书、Windows 证书、Tauri 签名私钥或任何上游凭据。候选产物只保留七天，目的是确认上游构建逻辑在派生项目中可运行。
 
@@ -365,19 +365,62 @@ sha256sum -c SHA256SUMS.txt
 Windows PowerShell：
 
 ```powershell
-Get-FileHash .\安装包文件名.exe -Algorithm SHA256
+Get-FileHash .\下载的资产文件名 -Algorithm SHA256
 ```
 
 将输出与 `SHA256SUMS.txt` 对照。校验不匹配时，停止安装、删除文件并调查发布过程。
 
 ### Windows
 
-运行匹配架构的 NSIS 安装程序。首期无独立 Authenticode 证书时，可能出现 SmartScreen 提示；只应从项目 Release 页面下载，且必须先校验摘要。升级时手动运行新版安装器。卸载通过系统“已安装的应用”执行。
+Windows 按 CPU 架构同时提供两类资产：
+
+- `*-setup.exe`：NSIS 安装版。运行匹配架构的安装程序；升级时手动运行新版安装器，卸载通过系统“已安装的应用”执行。
+- `*-portable.zip`：免安装便携版。先校验 ZIP，再**完整解压**到普通可写目录，例如用户目录下的专用工具目录；不要从资源管理器的 ZIP 预览中直接运行，也不要解压到 `Program Files` 或只读介质。
+
+便携 ZIP 的顶层目录中必须同时保留：
+
+```text
+open-video-downloader-zh-cn-windows-<架构>/
+├── open-video-downloader-zh-cn.exe
+└── open-video-downloader-zh-cn-portable/
+    └── .keep
+```
+
+`open-video-downloader-zh-cn-portable` 是应用识别便携模式的精确目录名，不能删除、改名或移到其他位置。首次启动后，应用会在其中写入配置、偏好、保险库、下载器工具目录和 WebView 数据。升级时关闭应用后，将新版 ZIP 覆盖解压到同一顶层目录，务必保留这个数据目录；若删除整个顶层目录，应用自身的便携数据也会被删除。
+
+便携版不安装应用本身，但并不承诺“零系统痕迹”：钥匙串、自动启动、通知和 WebView/系统组件可能仍由操作系统保存状态。它也不携带 WebView2 运行时；目标电脑必须已安装 Microsoft Edge WebView2 Evergreen Runtime。先在干净的 Windows 环境验证缺少该运行时时的提示和部署说明，再将资产公开。
+
+首期无独立 Authenticode 证书时，Windows 可能出现 SmartScreen 提示；只应从项目 Release 页面下载，且必须先校验摘要。
 
 ### Linux
 
+Linux 打包身份与显示名称分离，避免中文名称进入 Debian 控制文件：
+
+| 层级 | 固定值 | 说明 |
+| --- | --- | --- |
+| Linux Deb/RPM/AppImage 产品名称 | `open-video-downloader-zh-cn` | 只在 Linux 平台配置中生效，确保 Deb `Package` 字段为合法 ASCII 值。 |
+| 主二进制名称 | `open-video-downloader-zh-cn` | 与 Deb 内的启动程序和 desktop 文件一致。 |
+| 应用标识 | `io.github.hopol.open-video-downloader-zh-cn` | 用于应用数据和系统身份，不随 Linux 包名改变。 |
+| Windows/macOS 显示名称与窗口标题 | `Open Video Downloader 简体中文维护版` | 保持中文显示名称，不受 Linux 覆盖配置影响。 |
+
+候选构建和正式发布都会读取每个 Deb 的 control 元数据，并要求 `Package` 精确等于 `open-video-downloader-zh-cn`、版本与发布版本一致、架构正确，同时检查包内含有 `usr/bin/open-video-downloader-zh-cn` 和相应 desktop 文件。维护者也可在本地复核：
+
+```bash
+npm run verify:identity
+npm run tauri build -- --bundles deb
+dpkg-deb -f src-tauri/target/release/bundle/deb/*.deb Package
+dpkg-deb -f src-tauri/target/release/bundle/deb/*.deb Version
+dpkg-deb -f src-tauri/target/release/bundle/deb/*.deb Architecture
+```
+
+第一条命令的预期输出必须是：
+
+```text
+open-video-downloader-zh-cn
+```
+
 - AppImage：赋予执行权限后运行；
-- Deb：使用系统包管理器安装；
+- Deb：使用 `sudo apt install ./<下载的 .deb 文件>` 安装；不要尝试安装旧版内部包名含中文的 Deb 资产；
 - RPM：使用发行版的包管理器安装。
 
 升级时安装新包或替换 AppImage。卸载使用对应包管理器或删除 AppImage。不要混用上游和派生版的同一数据目录；本项目使用独立应用标识。

@@ -39,10 +39,17 @@
 ## 候选构建
 
 - [ ] 手动运行“候选构建”工作流。
-- [ ] Windows x64 构建成功并完成安装、启动和下载测试。
-- [ ] Windows ARM64 构建成功并在相应环境验证，或记录运行器/硬件限制。
+- [ ] Windows x64 构建成功，并在 x64 Windows 安装、启动和下载测试。
+- [ ] Windows x64 候选资产同时包含 NSIS 安装器与 `*-windows-x64-portable.zip`；已检查 ZIP 内有主程序、`open-video-downloader-zh-cn-portable/.keep` 和第三方许可证资源。
+- [ ] Windows x64 便携 ZIP 已完整解压到可写位置，首次启动、重启和数据持久化均已验证。
+- [ ] Windows ARM64 构建成功，并在相应环境验证，或记录运行器/硬件限制。
+- [ ] Windows ARM64 候选资产同时包含 NSIS 安装器与 `*-windows-arm64-portable.zip`；已在 ARM64 环境验证或记录限制。
 - [ ] Linux x64 构建成功并完成安装、启动和下载测试。
+- [ ] Linux x64 与 ARM64 的依赖安装日志确认 `xdg-utils` 和 `/usr/bin/xdg-open` 可用。
+- [ ] Linux x64 与 ARM64 的 Deb `Package` 字段都精确为 `open-video-downloader-zh-cn`，版本与构建版本一致、架构正确，且包内有 `usr/bin/open-video-downloader-zh-cn` 和相应 desktop 文件。
+- [ ] Windows/macOS 的中文产品显示名和窗口标题仍为 `Open Video Downloader 简体中文维护版`；Linux 覆盖配置未改变应用标识或主二进制名称。
 - [ ] Linux ARM64 构建成功并在相应环境验证，或记录运行器/硬件限制。
+- [ ] 两个 Linux 架构的候选资产均确实含有 AppImage，而非仅上传 Deb/RPM。
 - [ ] macOS Intel 和 Apple Silicon 仅作为未签名候选验证；不把未公证产物当作正式版本。
 - [ ] 候选资产命名、应用标识和数据目录不与上游客户端冲突。
 

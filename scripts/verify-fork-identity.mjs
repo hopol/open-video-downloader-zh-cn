@@ -27,10 +27,11 @@ async function mustExist(relativePath) {
   }
 }
 
-const [packageJson, cargoToml, tauriConfig, upstream] = await Promise.all([
+const [packageJson, cargoToml, tauriConfig, linuxTauriConfig, upstream] = await Promise.all([
   readJson('package.json'),
   readFile(resolve(root, 'src-tauri/Cargo.toml'), 'utf8'),
   readJson('src-tauri/tauri.conf.json'),
+  readJson('src-tauri/tauri.linux.conf.json'),
   readJson('.fork/upstream.json'),
 ]);
 
@@ -107,6 +108,24 @@ if (!forkRepositoryPattern.test(repository)) {
 
 if (tauriConfig.identifier !== 'io.github.hopol.open-video-downloader-zh-cn') {
   fail('Tauri identifier 必须为 io.github.hopol.open-video-downloader-zh-cn');
+}
+
+const expectedProductName = 'Open Video Downloader 简体中文维护版';
+const expectedMainBinaryName = 'open-video-downloader-zh-cn';
+const expectedLinuxProductName = 'open-video-downloader-zh-cn';
+if (tauriConfig.productName !== expectedProductName) {
+  fail(`基础 Tauri 产品名称必须为 ${expectedProductName}`);
+}
+if (tauriConfig.mainBinaryName !== expectedMainBinaryName) {
+  fail(`Tauri 主二进制名称必须为 ${expectedMainBinaryName}`);
+}
+if (linuxTauriConfig.productName !== expectedLinuxProductName) {
+  fail(`Linux Tauri 产品名称必须为 ${expectedLinuxProductName}`);
+}
+for (const field of ['identifier', 'mainBinaryName', 'app', 'bundle']) {
+  if (Object.hasOwn(linuxTauriConfig, field)) {
+    fail(`Linux Tauri 覆盖配置不得覆盖 ${field}`);
+  }
 }
 
 const configurableIdentityFiles = [

@@ -31,26 +31,38 @@ jobs:
             runner: windows-latest
             args: ''
             artifact: windows-x64
+            portable_architecture: x64
+            release_directory: src-tauri/target/release
           - name: Windows ARM64
             runner: windows-11-arm
             args: '--target aarch64-pc-windows-msvc'
             artifact: windows-arm64
+            portable_architecture: arm64
+            release_directory: src-tauri/target/aarch64-pc-windows-msvc/release
           - name: Linux x64
             runner: ubuntu-24.04
             args: ''
             artifact: linux-x64
+            portable_architecture: ''
+            release_directory: ''
           - name: Linux ARM64
             runner: ubuntu-24.04-arm
             args: ''
             artifact: linux-arm64
+            portable_architecture: ''
+            release_directory: ''
           - name: macOS Apple Silicon（未签名候选）
             runner: macos-latest
             args: '--target aarch64-apple-darwin'
             artifact: macos-aarch64
+            portable_architecture: ''
+            release_directory: ''
           - name: macOS Intel（未签名候选）
             runner: macos-latest
             args: '--target x86_64-apple-darwin'
             artifact: macos-x64
+            portable_architecture: ''
+            release_directory: ''
 
     runs-on: ${{ matrix.runner }}
     env:
@@ -95,6 +107,25 @@ jobs:
 
       - name: 构建候选安装包
         run: npm run tauri build -- ${{ matrix.args }}
+
+      - name: 验证 Linux Deb 包身份
+        if: startsWith(matrix.runner, 'ubuntu')
+        shell: bash
+        run: |
+          ./scripts/verify-debian-package.sh \
+            src-tauri/target/release/bundle/deb \
+            '${{ matrix.runner == 'ubuntu-24.04-arm' && 'arm64' || 'amd64' }}' \
+            "$(node -p \"require('./package.json').version\")"
+
+      - name: 生成 Windows 便携包
+        if: matrix.portable_architecture != ''
+        shell: pwsh
+        run: |
+          $version = node -p 'require("./package.json").version'
+          ./scripts/build-portable.ps1 `
+            -ReleaseDirectory '${{ matrix.release_directory }}' `
+            -Architecture '${{ matrix.portable_architecture }}' `
+            -Version $version
 
       - name: 上传候选安装包
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
