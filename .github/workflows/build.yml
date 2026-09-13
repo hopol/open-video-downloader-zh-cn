@@ -108,6 +108,15 @@ jobs:
       - name: 构建候选安装包
         run: npm run tauri build -- ${{ matrix.args }}
 
+      - name: 列出 Linux 打包产物目录
+        if: startsWith(matrix.runner, 'ubuntu')
+        shell: bash
+        run: |
+          echo "--- bundle/deb 目录内容 ---"
+          find src-tauri/target/release/bundle/deb -type f 2>/dev/null || echo "bundle/deb 不存在"
+          echo "--- 所有 .deb 文件 ---"
+          find src-tauri/target -name '*.deb' -type f 2>/dev/null || echo "未找到 .deb 文件"
+
       - name: 验证 Linux Deb 包身份
         if: startsWith(matrix.runner, 'ubuntu')
         shell: bash
@@ -116,6 +125,14 @@ jobs:
             src-tauri/target/release/bundle/deb \
             '${{ matrix.runner == 'ubuntu-24.04-arm' && 'arm64' || 'amd64' }}' \
             "$(node -p 'require("./package.json").version')"
+
+      - name: 上传 Linux Deb 调试信息
+        if: startsWith(matrix.runner, 'ubuntu') && failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ matrix.artifact }}-deb-debug
+          path: src-tauri/target/**/bundle/**/*.deb
+          retention-days: 3
 
       - name: 生成 Windows 便携包
         if: matrix.portable_architecture != ''

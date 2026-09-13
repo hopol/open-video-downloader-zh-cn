@@ -41,6 +41,12 @@ if [[ $actual_architecture != "$expected_architecture" ]]; then
 fi
 
 package_contents=$(dpkg-deb -c "$debian_package")
+
+echo "--- Deb 包内 usr/bin/ 文件 ---" >&2
+grep 'usr/bin/' <<< "$package_contents" >&2 || echo "（usr/bin/ 目录为空）" >&2
+echo "--- Deb 包内 usr/share/applications/ 文件 ---" >&2
+grep 'usr/share/applications/' <<< "$package_contents" >&2 || echo "（usr/share/applications/ 目录为空）" >&2
+
 for required_path in \
   './usr/bin/open-video-downloader-zh-cn' \
   './usr/share/applications/open-video-downloader-zh-cn.desktop'; do

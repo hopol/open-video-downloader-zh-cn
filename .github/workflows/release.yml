@@ -136,6 +136,15 @@ jobs:
       - name: 构建安装包
         run: npm run tauri build -- ${{ matrix.args }}
 
+      - name: 列出 Linux 打包产物目录
+        if: startsWith(matrix.runner, 'ubuntu')
+        shell: bash
+        run: |
+          echo "--- bundle/deb 目录内容 ---"
+          find src-tauri/target/release/bundle/deb -type f 2>/dev/null || echo "bundle/deb 不存在"
+          echo "--- 所有 .deb 文件 ---"
+          find src-tauri/target -name '*.deb' -type f 2>/dev/null || echo "未找到 .deb 文件"
+
       - name: 验证 Linux Deb 包身份
         if: startsWith(matrix.runner, 'ubuntu')
         shell: bash
