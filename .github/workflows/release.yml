@@ -214,6 +214,7 @@ jobs:
             shopt -s globstar nullglob
             for f in "$dir"**/*; do
               [[ -f "$f" ]] || continue
+              [[ -s "$f" ]] || continue
               filename=$(basename "$f")
               [[ "$filename" == "SHA256SUMS.txt" ]] && continue
               cp "$f" "$staging/${platform}_${filename}"
