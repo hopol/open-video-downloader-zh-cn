@@ -219,7 +219,7 @@ jobs:
           - 请在下载后使用 \`SHA256SUMS.txt\` 校验安装包完整性。
           - Windows 安装包在首期可能未使用代码签名，SmartScreen 警告不表示文件一定有害；请仅从此发布页下载并校验摘要。
           EOF
-          gh release create "$TAG" release-assets/* \
+          find release-assets -type f -print0 | sort -z | xargs -0 gh release create "$TAG" \
             --title "Open Video Downloader 简体中文维护版 $VERSION" \
             --draft \
             --notes-file release-notes.md
