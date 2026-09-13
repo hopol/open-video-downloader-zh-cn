@@ -221,7 +221,10 @@ jobs:
             --draft \
             --notes-file release-notes.md
           shopt -s globstar nullglob
-          files=(release-assets/**/*)
+          files=()
+          for f in release-assets/**/*; do
+            [[ -f "$f" ]] && files+=("$f")
+          done
           if [[ ${#files[@]} -eq 0 ]]; then
             echo "错误：release-assets 目录中没有找到文件。" >&2
             exit 1
