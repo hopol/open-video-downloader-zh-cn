@@ -172,7 +172,11 @@ mod tests {
   use std::fs;
 
   fn temp_dir(prefix: &str) -> PathBuf {
-    let dir = std::env::temp_dir().join(format!("open-video-downloader-zh-cn-{}-{}", prefix, uuid::Uuid::new_v4()));
+    let dir = std::env::temp_dir().join(format!(
+      "open-video-downloader-zh-cn-{}-{}",
+      prefix,
+      uuid::Uuid::new_v4()
+    ));
     fs::create_dir_all(&dir).expect("failed to create temp dir");
     dir
   }
