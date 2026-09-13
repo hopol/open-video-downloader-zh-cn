@@ -220,4 +220,10 @@ jobs:
             --title "Open Video Downloader 简体中文维护版 $VERSION" \
             --draft \
             --notes-file release-notes.md
-          find release-assets -type f -print0 | sort -z | xargs -0 -I {} gh release upload "$TAG" "{}" --clobber
+          shopt -s globstar nullglob
+          files=(release-assets/**/*)
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "错误：release-assets 目录中没有找到文件。" >&2
+            exit 1
+          fi
+          gh release upload "$TAG" "${files[@]}" --clobber
