@@ -1,6 +1,6 @@
 [package]
 name = "open-video-downloader-zh-cn"
-version = "3.2.2"
+version = "3.2.3"
 description = "Download videos from all over the web."
 license = "AGPL-3.0-or-later"
 authors = ["Open Video Downloader 简体中文维护版维护者"]
