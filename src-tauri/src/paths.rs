@@ -237,8 +237,7 @@ mod tests {
     fs::create_dir_all(&snap_user_common).unwrap();
     fs::create_dir_all(&app_dir).unwrap();
 
-    let bin_dir =
-      PathsManager::resolve_bin_dir_with(app_dir, None, Some(snap_user_common.clone()));
+    let bin_dir = PathsManager::resolve_bin_dir_with(app_dir, None, Some(snap_user_common.clone()));
 
     assert_eq!(bin_dir, snap_user_common.join(BIN_DIR));
   }
