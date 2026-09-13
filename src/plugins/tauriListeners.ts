@@ -1,0 +1,19 @@
+import { registerMediaListeners } from '../tauri/listeners/media';
+import { registerProgressListeners } from '../tauri/listeners/progress';
+import { registerDestinationListeners } from '../tauri/listeners/destination';
+import { registerBinaryListeners } from '../tauri/listeners/binaries';
+import { registerDiagnosticsListeners } from '../tauri/listeners/diagnostics.ts';
+import { registerAppListeners } from '../tauri/listeners/app.ts';
+import { registerShortcutListeners } from '../tauri/listeners/shortcuts.ts';
+
+export default {
+  install() {
+    registerAppListeners();
+    registerMediaListeners();
+    registerProgressListeners();
+    registerDestinationListeners();
+    registerBinaryListeners();
+    registerDiagnosticsListeners();
+    registerShortcutListeners();
+  },
+};

@@ -1,0 +1,102 @@
+name: 审阅上游同步
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: 创建上游同步候选
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出受保护主分支
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: 配置机器人提交身份
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+      - name: 验证上游远程并拉取提交
+        run: |
+          git remote remove upstream 2>/dev/null || true
+          git remote add upstream https://github.com/jely2002/youtube-dl-gui.git
+          git fetch --no-tags upstream main
+          actual_url="$(git remote get-url upstream)"
+          test "$actual_url" = 'https://github.com/jely2002/youtube-dl-gui.git'
+
+      - name: 判断是否有上游变更
+        id: update
+        run: |
+          upstream_commit="$(git rev-parse upstream/main)"
+          if git merge-base --is-ancestor "$upstream_commit" HEAD; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo '上游没有新提交。'
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+            echo "commit=$upstream_commit" >> "$GITHUB_OUTPUT"
+            echo "short=$(git rev-parse --short "$upstream_commit")" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 创建候选同步分支
+        if: steps.update.outputs.changed == 'true'
+        id: merge
+        env:
+          UPSTREAM_COMMIT: ${{ steps.update.outputs.commit }}
+          SYNC_BRANCH: sync/upstream-${{ steps.update.outputs.short }}
+        run: |
+          if git ls-remote --exit-code --heads origin "$SYNC_BRANCH" >/dev/null 2>&1; then
+            echo 'exists=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git switch -c "$SYNC_BRANCH"
+          if ! git merge --no-ff --no-commit "$UPSTREAM_COMMIT"; then
+            git merge --abort || true
+            echo "上游合并冲突；未推送任何半成品分支。" >&2
+            exit 1
+          fi
+
+          UPSTREAM_VERSION="$(node -p 'require("./package.json").version')"
+          UPSTREAM_COMMIT="$UPSTREAM_COMMIT" UPSTREAM_VERSION="$UPSTREAM_VERSION" node --input-type=module <<'NODE'
+          import { readFile, writeFile } from 'node:fs/promises';
+          const path = '.fork/upstream.json';
+          const state = JSON.parse(await readFile(path, 'utf8'));
+          state.upstream.commit = process.env.UPSTREAM_COMMIT;
+          state.upstream.version = process.env.UPSTREAM_VERSION;
+          state.lastSynchronizedAt = new Date().toISOString();
+          await writeFile(path, `${JSON.stringify(state, null, 2)}\n`);
+          NODE
+
+          git add .fork/upstream.json
+          git commit -m "同步: 合并上游 ${{ steps.update.outputs.short }}"
+          git push origin "$SYNC_BRANCH"
+
+      - name: 创建同步拉取请求
+        if: steps.update.outputs.changed == 'true' && steps.merge.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SYNC_BRANCH: sync/upstream-${{ steps.update.outputs.short }}
+          UPSTREAM_COMMIT: ${{ steps.update.outputs.commit }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "$SYNC_BRANCH" \
+            --title "同步: 合并上游 ${{ steps.update.outputs.short }}" \
+            --body-file - <<EOF
+          ## 自动创建的上游同步候选
+
+          上游提交：\`$UPSTREAM_COMMIT\`
+
+          此工作流只执行 Git 拉取、合并和来源记录更新；不会安装依赖、执行上游脚本、直接合并 \`main\` 或修改发布凭据。
+
+          合并前必须人工审阅变更，并确认持续集成、简体中文语言检查、身份检查及安全检查均通过。
+          EOF

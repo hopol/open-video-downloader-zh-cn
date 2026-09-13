@@ -1,0 +1,10 @@
+# 高敏感路径的默认审核人
+# 添加第二位可信维护者后，请将其 GitHub 账号追加到各行，
+# 例如：@hopol @second-maintainer
+
+/.github/workflows/        @hopol
+/scripts/                  @hopol
+/src-tauri/tauri.conf.json @hopol
+/src-tauri/Cargo.toml      @hopol
+/.fork/upstream.json       @hopol
+/NOTICE                    @hopol

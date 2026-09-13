@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/jely2002/youtube-dl-gui.git",
+    "branch": "main",
+    "commit": "c402ee39c0eabab68934c48f8b787ff37a1577b0",
+    "version": "3.2.1"
+  },
+  "fork": {
+    "repository": "https://github.com/hopol/open-video-downloader-zh-cn",
+    "defaultBranch": "main",
+    "releaseTagPrefix": "zh-cn-v",
+    "applicationUpdates": false,
+    "telemetry": false,
+    "toolManifest": {
+      "provider": "upstream",
+      "manifestUrl": "https://jely2002.github.io/youtube-dl-gui/manifest/manifest.json",
+      "signatureUrl": "https://jely2002.github.io/youtube-dl-gui/manifest/manifest.sig",
+      "independenceStatus": "temporary-upstream-signed-service"
+    }
+  },
+  "lastSynchronizedAt": "2026-09-12T00:00:00Z"
+}

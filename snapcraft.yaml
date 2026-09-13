@@ -1,0 +1,104 @@
+name: open-video-downloader-zh-cn
+title: Open Video Downloader 简体中文维护版
+base: core24
+version: '3.2.1'
+license: 'AGPL-3.0-or-later'
+website: 'https://hopol.github.io/open-video-downloader-zh-cn/'
+issues: 'https://github.com/hopol/open-video-downloader-zh-cn/issues'
+source-code: 'https://github.com/hopol/open-video-downloader-zh-cn'
+contact: 'https://github.com/hopol/open-video-downloader-zh-cn/security/advisories/new'
+summary: 简体中文跨平台视频与音频下载器
+description: |
+  Open Video Downloader 简体中文维护版是独立维护的跨平台开源桌面应用，可从受支持的网站下载视频、音频、字幕与元数据。它在强大的 yt-dlp 引擎之上提供简洁的图形界面，让用户无需使用命令行也能使用高级下载功能。
+
+  可选择质量和格式、下载单个项目或整个播放列表，并管理支持暂停和恢复的下载。本项目不隶属于上游维护者；应用自身不使用自动更新或错误遥测。
+
+grade: stable
+confinement: strict
+
+icon: src-tauri/icons/icon.png
+
+platforms:
+  amd64:
+    build-on: amd64
+    build-for: amd64
+  arm64:
+    build-on: arm64
+    build-for: arm64
+
+layout:
+  /usr/lib/webkit2gtk-4.1:
+    bind: $SNAP/usr/lib/webkit2gtk-4.1
+
+apps:
+  open-video-downloader-zh-cn:
+    command: usr/bin/open-video-downloader-zh-cn
+    desktop: usr/share/applications/open-video-downloader-zh-cn.desktop
+    extensions: [gnome]
+    plugs:
+      - network
+      - network-status
+      - home
+      - unity7
+      - single-instance-plug
+    slots:
+      - single-instance
+
+slots:
+  single-instance:
+    interface: dbus
+    bus: session
+    name: io-github-hopol-open-video-downloader-zh-cn.SingleInstance
+
+plugs:
+  single-instance-plug:
+    interface: dbus
+    bus: session
+    name: io-github-hopol-open-video-downloader-zh-cn.SingleInstance
+
+parts:
+  build-app:
+    plugin: dump
+    source: .
+    build-snaps:
+      - node/24/stable
+      - rustup/latest/stable
+    build-packages:
+      - libwebkit2gtk-4.1-dev
+      - build-essential
+      - curl
+      - wget
+      - file
+      - libssl-dev
+      - libgtk-3-dev
+      - libayatana-appindicator3-dev
+      - librsvg2-dev
+      - dpkg
+    stage-packages:
+      - libwebkit2gtk-4.1-0
+      - libayatana-appindicator3-1
+    override-build: |
+      set -eu
+
+      npm ci
+      
+      rustup toolchain install stable
+      rustup default stable
+      cargo install --locked cargo-about
+
+      npm run tauri build -- --bundles deb --no-sign
+      dpkg -x src-tauri/target/release/bundle/deb/*.deb "$SNAPCRAFT_PART_INSTALL/"
+      mkdir -p "$CRAFT_PART_INSTALL/usr/lib/webkit2gtk-4.1"
+
+      for TRIPLET in x86_64-linux-gnu aarch64-linux-gnu; do
+        SRC="$CRAFT_PART_INSTALL/usr/lib/$TRIPLET/webkit2gtk-4.1"
+        if [ -d "$SRC" ]; then
+          cp -a "$SRC/." "$CRAFT_PART_INSTALL/usr/lib/webkit2gtk-4.1/"
+          break
+        fi
+      done
+
+      DESKTOP_FILE="$SNAPCRAFT_PART_INSTALL/usr/share/applications/open-video-downloader-zh-cn.desktop"
+      if [ -f "$DESKTOP_FILE" ]; then
+        sed -i -E 's/^Categories=.*/Categories=Network;AudioVideo;Utility;/' "$DESKTOP_FILE"
+      fi

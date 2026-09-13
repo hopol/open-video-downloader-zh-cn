@@ -1,0 +1,106 @@
+name: 候选构建
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/build.yml'
+      - '.github/actions/install-tauri-deps/**'
+      - 'src/**'
+      - 'src-isolation/**'
+      - 'src-tauri/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.*'
+      - 'vite.config.isolation.ts'
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            runner: windows-latest
+            args: ''
+            artifact: windows-x64
+          - name: Windows ARM64
+            runner: windows-11-arm
+            args: '--target aarch64-pc-windows-msvc'
+            artifact: windows-arm64
+          - name: Linux x64
+            runner: ubuntu-24.04
+            args: ''
+            artifact: linux-x64
+          - name: Linux ARM64
+            runner: ubuntu-24.04-arm
+            args: ''
+            artifact: linux-arm64
+          - name: macOS Apple Silicon（未签名候选）
+            runner: macos-latest
+            args: '--target aarch64-apple-darwin'
+            artifact: macos-aarch64
+          - name: macOS Intel（未签名候选）
+            runner: macos-latest
+            args: '--target x86_64-apple-darwin'
+            artifact: macos-x64
+
+    runs-on: ${{ matrix.runner }}
+    env:
+      CARGO_TERM_COLOR: always
+      TAURI_SKIP_UPDATE_CHECK: 1
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: 设置 Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: 安装 Linux 系统依赖
+        if: startsWith(matrix.runner, 'ubuntu')
+        uses: ./.github/actions/install-tauri-deps
+
+      - name: 安装 Rust 工具链
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9 # rust-toolchain action
+        with:
+          toolchain: 1.94.1
+          targets: ${{ matrix.runner == 'windows-11-arm' && 'aarch64-pc-windows-msvc' || matrix.runner == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: 缓存 Rust 构建产物
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae # v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: 安装 cargo-about
+        uses: taiki-e/install-action@0fde6d128a3d980ceac30be8c8b8739abd963b81 # v2
+        with:
+          tool: cargo-about
+
+      - name: 安装前端依赖
+        run: npm ci
+
+      - name: 验证派生项目身份
+        run: npm run verify:identity
+
+      - name: 构建候选安装包
+        run: npm run tauri build -- ${{ matrix.args }}
+
+      - name: 上传候选安装包
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            src-tauri/target/**/release/bundle/**
+          if-no-files-found: error
+          retention-days: 7
