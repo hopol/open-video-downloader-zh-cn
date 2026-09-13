@@ -48,8 +48,8 @@ echo "--- Deb 包内 usr/share/applications/ 文件 ---" >&2
 grep 'usr/share/applications/' <<< "$package_contents" >&2 || echo "（usr/share/applications/ 目录为空）" >&2
 
 for required_path in \
-  './usr/bin/open-video-downloader-zh-cn' \
-  './usr/share/applications/open-video-downloader-zh-cn.desktop'; do
+  'usr/bin/open-video-downloader-zh-cn' \
+  'usr/share/applications/open-video-downloader-zh-cn.desktop'; do
   if ! grep -Fq "$required_path" <<< "$package_contents"; then
     echo "Deb 内容缺少必需路径：$required_path" >&2
     exit 1
