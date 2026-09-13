@@ -115,7 +115,7 @@ jobs:
           ./scripts/verify-debian-package.sh \
             src-tauri/target/release/bundle/deb \
             '${{ matrix.runner == 'ubuntu-24.04-arm' && 'arm64' || 'amd64' }}' \
-            "$(node -p \"require('./package.json').version\")"
+            "$(node -p 'require("./package.json").version')"
 
       - name: 生成 Windows 便携包
         if: matrix.portable_architecture != ''
